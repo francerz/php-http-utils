@@ -2,6 +2,7 @@
     "name": "francerz/php-http-tools",
     "description": "PHP HTTP Tool kit compatible with PSR-7, PSR-17 and PSR-18",
     "type": "library",
+    "license": "MIT",
     "require": {
         "psr/http-message": "^1.0",
         "psr/http-factory": "^1.0"
