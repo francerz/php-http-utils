@@ -1,8 +1,8 @@
 PHP HTTP Tools
 =======================================
 
-PHP HTTP Tool kit that brings common functionality in a standarized way,
-supporting PSR-7 and PSR-17 standards.
+PHP HTTP Tool kit that brings common functionality in a standard way,
+supporting PSR-7 and PSR-17.
 
 Installation
 ---------------------------------------
@@ -16,12 +16,12 @@ composer install francerz/php-http-tools
 Featured functionality
 ----------------------------------------
 
-### HttpFactoryManager class
+### HttpFactoryManager class
 
 Preserve per instance, reference of PSR-17 Factories (psr/http-factory).
 Uses set and get methods to manage existing factory instances.
 
-#### Individual setter methods
+#### Individual setter methods
 
 - `setRequestFactory(RequestFactoryInterface $requestFactory)`
 - `setResponseFactory(ResponseFactoryInterface $responseFactory)`
@@ -41,7 +41,7 @@ previously.
 - `getUploadedFileFactory() : UploadedFileFactoryInterface`
 - `getUriFactory() : UriFactoryInterface`
 
-#### Automatic setter method
+#### Automatic setter method
 
 The method `setMatchingFactories($factoryObject)` receives an object and
 checks implementation of each Factory Interface. All matching interfaces
@@ -49,7 +49,7 @@ will be set.
 
 This method is included on the constructor to quick factory setting.
 
-### UriHelper class
+### UriHelper class
 
 Provides methods for common manipulation to `UriInterface` objects.
 
@@ -70,7 +70,7 @@ Provides methods for common manipulation to `UriInterface` objects.
 - `getQueryParams(UriInterface $uri) : array`
 - `getQueryParam(UriInterface $uri, string $key) : ?string`
 
-#### Fragment part manipulation
+#### Fragment part manipulation
 
 - `withFragmentParam(UriInterface $uri, string $key, $value) : UriInterface`
 - `withFragmentParams(UriInterface $uri, array $params, $replace = true) : UriInterface`
@@ -78,16 +78,16 @@ Provides methods for common manipulation to `UriInterface` objects.
 - `getFragmentParams(UriInterface $uri) : array`
 - `getFragmentParam(UriInterface $uri, string $key) : ?string`
 
-### MessageHelper class
+### MessageHelper class
 
 Provides methods for common manipulation to `MessageInterface` objects.
 
-#### Helper setup
+#### Helper setup
 
 - `setHttpFactoryManager(HttpFactoryManager $factories)`
 - `setAuthenticationSchemes(array $authenticationSchemeClasses)`
 
-#### Creating a request object from server parameters
+#### Creating a request object from server parameters
 
 - `getCurrentRequest() : RequestInterface`
 
