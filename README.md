@@ -10,7 +10,7 @@ Installation
 Using composer.
 
 ```bash
-composer install francerz/php-http-tools
+composer require francerz/php-http-tools
 ```
 
 Featured functionality
