@@ -1,0 +1,24 @@
+{
+    "name": "francerz/php-http-tools",
+    "description": "PHP HTTP Tool kit compatible with PSR-7, PSR-17 and PSR-18",
+    "type": "library",
+    "require": {
+        "psr/http-message": "^1.0",
+        "psr/http-factory": "^1.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.4"
+    },
+    "authors": [
+        {
+            "name": "Francerz",
+            "email": "francerzam@hotmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Francerz\\Http\\Tools": "src/tools",
+            "Francerz\\Http\\Headers": "src/headers"
+        }
+    }
+}
