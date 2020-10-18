@@ -19,7 +19,7 @@ class UriHelper
         parse_str($encoded_string, $params);
         if (array_key_exists($key, $params)) {
             $value = $params[$key];
-            unset($params);
+            unset($params[$key]);
             return http_build_query($params);
         }
         return $encoded_string;
