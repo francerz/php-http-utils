@@ -2,8 +2,8 @@
 
 namespace Francerz\Http\Tools\BodyParsers;
 
+use Francerz\Http\Constants\MediaTypes;
 use Francerz\Http\Tools\BodyParserInterface;
-use Francerz\Http\Tools\MediaTypes;
 use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\StreamInterface;
 
