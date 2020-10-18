@@ -29,7 +29,8 @@ class BodyParserHandler
         $parser = new $bodyParserClass();
         static::$parsers[] = $parser;
         foreach ($parser->getSupportedTypes() as $type) {
-            static::$typesIndex[$type] = strtolower($parser);
+            $type = strtolower($type);
+            static::$typesIndex[$type] = $parser;
         }
     }
 
