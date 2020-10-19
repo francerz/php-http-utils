@@ -15,6 +15,10 @@ class BearerAuthorizationHeader extends AbstractAuthorizationHeader
         $new->token = $credentials;
         return $new;
     }
+    public function getCredentials(): string
+    {
+        return $this->token;
+    }
     public function withToken(string $token)
     {
         $new = clone $this;

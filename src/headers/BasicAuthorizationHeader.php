@@ -23,6 +23,10 @@ class BasicAuthorizationHeader extends AbstractAuthorizationHeader
         $new->password = $parts[1];
         return $new;
     }
+    public function getCredentials(): string
+    {
+        return $this->user . ':' . $this->password;
+    }
 
     public function withUser(string $user)
     {
