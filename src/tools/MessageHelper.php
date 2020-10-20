@@ -3,6 +3,8 @@
 namespace Francerz\Http\Tools;
 
 use Francerz\Http\Headers\AbstractAuthorizationHeader;
+use Francerz\Http\Headers\BasicAuthorizationHeader;
+use Francerz\Http\Headers\BearerAuthorizationHeader;
 use InvalidArgumentException;
 use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\RequestInterface;
@@ -74,7 +76,7 @@ class MessageHelper
         }, $authenticationSchemesClasses);
         
         static::$authenticationSchemesClasses = array_combine($types, $authenticationSchemesClasses);
-    }  
+    }
 
     public static function getFirstAuthorizationHeader(MessageInterface $message) : ?AbstractAuthorizationHeader
     {
@@ -139,3 +141,8 @@ class MessageHelper
             ->withHeader('Content-Type', $mediaType);
     }
 }
+
+MessageHelper::setAuthenticationSchemes(array(
+    BasicAuthorizationHeader::class,
+    BearerAuthorizationHeader::class
+));
