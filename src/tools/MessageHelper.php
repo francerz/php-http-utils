@@ -69,10 +69,14 @@ class MessageHelper
                 );
             }
         });
-        static::$authenticationSchemesClasses = $authenticationSchemesClasses;
+        $types = array_map(function(AbstractAuthorizationHeader $v) {
+            return $v::getAuthorizationType();
+        }, $authenticationSchemesClasses);
+        
+        static::$authenticationSchemesClasses = array_combine($types, $authenticationSchemesClasses);
     }  
 
-    public static function getAuthorizationHeader(MessageInterface $message) : ?AbstractAuthorizationHeader
+    public static function getFirstAuthorizationHeader(MessageInterface $message) : ?AbstractAuthorizationHeader
     {
         $header = $message->getHeader('Authorization');
 
@@ -80,19 +84,19 @@ class MessageHelper
             return null;
         }
 
+        $header = current($header);
+
         $wsp = strpos($header, ' ');
         $type = ucfirst(strtolower(substr($header, 0, $wsp)));
         $content = substr($header, $wsp + 1);
 
-        foreach (static::$authenticationSchemesClasses as $auSch) {
-            if (strcasecmp($type, $auSch::getAuthorizationType()) !== 0) {
-                continue;
-            }
-            $authHeader = new $auSch();
-            return $authHeader->withCredentials($content);
+        if (!array_key_exists($type, static::$authenticationSchemesClasses)) {
+            return null;
         }
+        $authSch = static::$authenticationSchemesClasses[$type];
 
-        return null;
+        $authHeader = new $authSch();
+        return $authHeader->withCredentials($content);
     }
 
     public static function getContent(MessageInterface $message)
