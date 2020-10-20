@@ -56,26 +56,28 @@ class MessageHelper
         return $request;
     }
 
-    private static $authenticationSchemesClasses;
+    private static $authenticationSchemeClasses;
 
-    public static function setAuthenticationSchemes(array $authenticationSchemesClasses)
+    public static function setAuthenticationSchemes(array $authenticationSchemeClasses)
     {
-        array_walk($authenticationSchemesClasses, function($v) {
-            if (!class_exists($v)) {
-                throw new InvalidArgumentException("Class $v does not exists.");
-            }
-            if (!is_subclass_of($v, AbstractAuthorizationHeader::class)) {
-                throw new InvalidArgumentException(
-                    'Authentication Schemes classes MUST extends from '.
-                    AbstractAuthorizationHeader::class
-                );
-            }
-        });
-        $types = array_map(function(AbstractAuthorizationHeader $v) {
-            return $v::getAuthorizationType();
-        }, $authenticationSchemesClasses);
-        
-        static::$authenticationSchemesClasses = array_combine($types, $authenticationSchemesClasses);
+        foreach ($authenticationSchemeClasses as $class) {
+            static::addAuthenticationScheme($class);
+        }
+    }
+
+    public static function addAuthenticationScheme(string $authenticationSchemeClass)
+    {
+        if (!class_exists($authenticationSchemeClass)) {
+            throw new InvalidArgumentException(sprintf('Class %s does not exists.', $authenticationSchemeClass));
+        }
+        if (!is_subclass_of($authenticationSchemeClass, AbstractAuthorizationHeader::class)) {
+            throw new InvalidArgumentException(
+                'Authentication Scheme class MUST extend from '.
+                AbstractAuthorizationHeader::class
+            );
+        }
+        $type = $authenticationSchemeClass::getAuthorizationType();
+        static::$authenticationSchemeClasses[$type] = $authenticationSchemeClass;
     }
 
     public static function getFirstAuthorizationHeader(MessageInterface $message) : ?AbstractAuthorizationHeader
@@ -92,10 +94,10 @@ class MessageHelper
         $type = ucfirst(strtolower(substr($header, 0, $wsp)));
         $content = substr($header, $wsp + 1);
 
-        if (!array_key_exists($type, static::$authenticationSchemesClasses)) {
+        if (!array_key_exists($type, static::$authenticationSchemeClasses)) {
             return null;
         }
-        $authSch = static::$authenticationSchemesClasses[$type];
+        $authSch = static::$authenticationSchemeClasses[$type];
 
         $authHeader = new $authSch();
         return $authHeader->withCredentials($content);
