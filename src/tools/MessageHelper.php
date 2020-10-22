@@ -8,6 +8,7 @@ use Francerz\Http\Headers\BearerAuthorizationHeader;
 use InvalidArgumentException;
 use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 
 class MessageHelper
 {
@@ -141,6 +142,31 @@ class MessageHelper
         return $message
             ->withBody($body)
             ->withHeader('Content-Type', $mediaType);
+    }
+
+    public static function isInfo(ResponseInterface $response) : bool
+    {
+        return $response->getStatusCode() >= 100 && $response->getStatusCode() < 200;
+    }
+    public static function isSuccess(ResponseInterface $response) : bool
+    {
+        return $response->getStatusCode() >= 200 && $response->getStatusCode() < 300;
+    }
+    public static function isRedirect(ResponseInterface $response) : bool
+    {
+        return $response->getStatusCode() >= 300 && $response->getStatusCode() < 400;
+    }
+    public static function isClientError(ResponseInterface $response) : bool
+    {
+        return $response->getStatusCode() >= 400 && $response->getStatusCode() < 500;
+    }
+    public static function isServerError(ResponseInterface $response) : bool
+    {
+        return $response->getStatusCode() >= 500;
+    }
+    public static function isError(ResponseInterface $response) : bool
+    {
+        return $response->getStatusCode() >= 400;
     }
 }
 
