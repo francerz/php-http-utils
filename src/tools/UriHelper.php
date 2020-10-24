@@ -2,6 +2,7 @@
 
 namespace Francerz\Http\Tools;
 
+use LogicException;
 use Psr\Http\Message\UriFactoryInterface;
 use Psr\Http\Message\UriInterface;
 
@@ -125,5 +126,35 @@ class UriHelper
         $uri = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' ? 'https': 'http';
         $uri.= '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
         return $uriFactory->createUri($uri);
+    }
+
+    private static function mapReplaceString(string $uri, array $replaces, bool $encode_values = true) : string
+    {
+        $match = preg_match_all('/\{([a-zA-Z0-9\-\_]+)\}/S', $uri, $matches);
+        if (!$match) {
+            return $uri;
+        }
+        $matches = array_unique($matches[1]);
+        foreach ($matches as $match) {
+            if (!array_key_exists($match, $replaces)) {
+                continue;
+            }
+            $val = $encode_values ? urlencode($replaces[$match]) : $replaces[$match];
+            $uri = str_replace('{'.$match.'}', $val, $uri);
+        }
+        return $uri;
+    }
+
+    public static function mapReplace(UriFactoryInterface $uriFactory, $uri, array $replaces, bool $encode_values = true) : UriInterface
+    {
+        $uriStr = $uri;
+        if ($uri instanceof UriInterface) {
+            $uriStr = (string) $uri;
+        }
+        if (!is_string($uriStr)) {
+            throw new LogicException(__METHOD__.' $uri argument must be string or UriInterface object');
+        }
+        $uriStr = static::mapReplaceString($uri, $replaces, $encode_values);
+        return $uriFactory->createUri($uriStr);
     }
 }
