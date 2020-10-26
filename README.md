@@ -1,8 +1,8 @@
-PHP HTTP Tools
+PHP Http Utils
 =======================================
 
-PHP HTTP Tool kit that brings common functionality in a standard way,
-supporting PSR-7 and PSR-17.
+PHP HTTP utils library that supports PSR-7 and PSR-17 with basic helpers and
+common operations.
 
 Installation
 ---------------------------------------
@@ -10,7 +10,7 @@ Installation
 Using composer.
 
 ```bash
-composer require francerz/http-tools
+composer require francerz/http-utils
 ```
 
 Featured functionality

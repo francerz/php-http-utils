@@ -1,6 +1,7 @@
 {
-    "name": "francerz/http-tools",
-    "description": "PHP HTTP Tool kit compatible with PSR-7, PSR-17 and PSR-18",
+    "name": "francerz/http-utils",
+    "description": "PHP HTTP utils compatible with PSR-7, PSR-17",
+    "keywords": ["psr-7","http","http-message","http-factory","psr-17"],
     "type": "library",
     "license": "MIT",
     "require": {
