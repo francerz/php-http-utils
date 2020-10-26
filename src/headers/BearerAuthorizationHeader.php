@@ -5,7 +5,8 @@ namespace Francerz\Http\Headers;
 class BearerAuthorizationHeader extends AbstractAuthorizationHeader
 {
     private $token;
-    public function __construct(string $token)
+
+    public function __construct(string $token = '')
     {
         $this->token = $token;
     }
