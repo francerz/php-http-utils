@@ -19,9 +19,9 @@
     ],
     "autoload": {
         "psr-4": {
-            "Francerz\\Http\\Tools\\": "src/tools",
-            "Francerz\\Http\\Headers\\": "src/headers",
-            "Francerz\\Http\\Constants\\": "src/constants"
+            "Francerz\\Http\\Utils\\": "src/tools",
+            "Francerz\\Http\\Utils\\Headers\\": "src/headers",
+            "Francerz\\Http\\Utils\\Constants\\": "src/constants"
         }
     }
 }
