@@ -1,5 +1,5 @@
 {
-    "name": "francerz/php-http-tools",
+    "name": "francerz/http-tools",
     "description": "PHP HTTP Tool kit compatible with PSR-7, PSR-17 and PSR-18",
     "type": "library",
     "license": "MIT",
