@@ -1,10 +1,10 @@
 <?php
 
-namespace Francerz\Http\Tools;
+namespace Francerz\Http\Utils;
 
-use Francerz\Http\Headers\AbstractAuthorizationHeader;
-use Francerz\Http\Headers\BasicAuthorizationHeader;
-use Francerz\Http\Headers\BearerAuthorizationHeader;
+use Francerz\Http\Utils\Headers\AbstractAuthorizationHeader;
+use Francerz\Http\Utils\Headers\BasicAuthorizationHeader;
+use Francerz\Http\Utils\Headers\BearerAuthorizationHeader;
 use InvalidArgumentException;
 use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\RequestInterface;

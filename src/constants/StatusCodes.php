@@ -1,6 +1,6 @@
 <?php
 
-namespace Francerz\Http\Constants;
+namespace Francerz\Http\Utils\Constants;
 
 class StatusCodes
 {

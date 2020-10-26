@@ -1,6 +1,6 @@
 <?php
 
-namespace Francerz\Http\Headers;
+namespace Francerz\Http\Utils\Headers;
 
 abstract class AbstractAuthorizationHeader implements HeaderInterface
 {

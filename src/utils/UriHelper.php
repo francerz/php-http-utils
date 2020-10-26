@@ -1,6 +1,6 @@
 <?php
 
-namespace Francerz\Http\Tools;
+namespace Francerz\Http\Utils;
 
 use LogicException;
 use Psr\Http\Message\UriFactoryInterface;

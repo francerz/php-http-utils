@@ -1,28 +1,28 @@
 <?php
 
-namespace Francerz\Http\Tools\BodyParsers;
+namespace Francerz\Http\Utils\BodyParsers;
 
-use Francerz\Http\Constants\MediaTypes;
-use Francerz\Http\Tools\BodyParserInterface;
+use Francerz\Http\Utils\BodyParserInterface;
+use Francerz\Http\Utils\Constants\MediaTypes;
 use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\StreamInterface;
 
-class JsonBodyParser implements BodyParserInterface
+class UrlEncodedBodyParser implements BodyParserInterface
 {
     public function getSupportedTypes(): array
     {
         return array(
-            MediaTypes::APPLICATION_JSON
+            MediaTypes::APPLICATION_X_WWW_FORM_URLENCODED
         );
     }
 
     public function parse(StreamInterface $content, string $contentType = '')
     {
-        return json_decode((string) $content);
+        parse_str((string) $content, $result);
+        return $result;
     }
-
     public function unparse(StreamFactoryInterface $streamFactory, $content, string $contentType = ''): StreamInterface
     {
-        return $streamFactory->createStream(json_encode($content));
+        return $streamFactory->createStream(http_build_query($content));
     }
 }

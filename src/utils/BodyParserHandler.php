@@ -1,9 +1,9 @@
 <?php
 
-namespace Francerz\Http\Tools;
+namespace Francerz\Http\Utils;
 
-use Francerz\Http\Tools\BodyParsers\JsonBodyParser;
-use Francerz\Http\Tools\BodyParsers\UrlEncodedBodyParser;
+use Francerz\Http\Utils\BodyParsers\JsonBodyParser;
+use Francerz\Http\Utils\BodyParsers\UrlEncodedBodyParser;
 use InvalidArgumentException;
 
 class BodyParserHandler
