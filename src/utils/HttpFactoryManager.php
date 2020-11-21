@@ -65,7 +65,7 @@ class HttpFactoryManager
     }
     public function getResponseFactory() : ResponseFactoryInterface
     {
-        if (!isset($this->requestFactory)) {
+        if (!isset($this->responseFactory)) {
             throw new LogicException("ResponseFactory is not set.");
         }
         return $this->responseFactory;
@@ -76,7 +76,7 @@ class HttpFactoryManager
     }
     public function getServerRequestFactory() : ServerRequestFactoryInterface
     {
-        if (!isset($this->requestFactory)) {
+        if (!isset($this->serverRequestFactory)) {
             throw new LogicException("ServerRequestFactory is not set.");
         }
         return $this->serverRequestFactory;
@@ -87,7 +87,7 @@ class HttpFactoryManager
     }
     public function getStreamFactory() : StreamFactoryInterface
     {
-        if (!isset($this->requestFactory)) {
+        if (!isset($this->streamFactory)) {
             throw new LogicException("StreamFactory is not set.");
         }
         return $this->streamFactory;
@@ -98,7 +98,7 @@ class HttpFactoryManager
     }
     public function getUploadedFileFactory() : UploadedFileFactoryInterface
     {
-        if (!isset($this->requestFactory)) {
+        if (!isset($this->uploadedFileFactory)) {
             throw new LogicException("UploadedFileFactory is not set.");
         }
         return $this->uploadedFileFactory;
@@ -109,7 +109,7 @@ class HttpFactoryManager
     }
     public function getUriFactory() : UriFactoryInterface
     {
-        if (!isset($this->requestFactory)) {
+        if (!isset($this->uriFactory)) {
             throw new LogicException("UriFactory is not set.");
         }
         return $this->uriFactory;
