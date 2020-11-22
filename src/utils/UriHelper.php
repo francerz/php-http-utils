@@ -157,4 +157,10 @@ class UriHelper
         $uriStr = static::mapReplaceString($uri, $replaces, $encode_values);
         return $uriFactory->createUri($uriStr);
     }
+
+    public static function getSegments(UriInterface $uri) : array
+    {
+        $path = $uri->getPath();
+        return explode('/', ltrim($path,'/'));
+    }
 }
