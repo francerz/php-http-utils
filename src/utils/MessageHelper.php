@@ -9,6 +9,7 @@ use InvalidArgumentException;
 use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 class MessageHelper
 {
@@ -19,7 +20,7 @@ class MessageHelper
         static::$httpFactoryManager = $factories;
     }
 
-    public static function getCurrentRequest() : RequestInterface
+    public static function getCurrentRequest() : ServerRequestInterface
     {
         if (!isset(static::$httpFactoryManager)) {
             throw new \Exception(sprintf(
@@ -28,7 +29,7 @@ class MessageHelper
             ));
         }
 
-        $requestFactory = static::$httpFactoryManager->getRequestFactory();
+        $requestFactory = static::$httpFactoryManager->getServerRequestFactory();
         $uriFactory     = static::$httpFactoryManager->getUriFactory();
         $streamFactory  = static::$httpFactoryManager->getStreamFactory();
 
@@ -45,7 +46,7 @@ class MessageHelper
 
         // Builds request with factory
         $request = $requestFactory
-            ->createRequest($method, $uri)
+            ->createServerRequest($method, $uri, $_SERVER)
             ->withProtocolVersion($sp)
             ->withBody($streamFactory->createStream($content));
 
