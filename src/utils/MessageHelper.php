@@ -2,14 +2,17 @@
 
 namespace Francerz\Http\Utils;
 
+use Francerz\Http\Utils\Constants\StatusCodes;
 use Francerz\Http\Utils\Headers\AbstractAuthorizationHeader;
 use Francerz\Http\Utils\Headers\BasicAuthorizationHeader;
 use Francerz\Http\Utils\Headers\BearerAuthorizationHeader;
 use InvalidArgumentException;
+use LogicException;
 use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\UriInterface;
 
 class MessageHelper
 {
@@ -20,14 +23,19 @@ class MessageHelper
         static::$httpFactoryManager = $factories;
     }
 
-    public static function getCurrentRequest() : ServerRequestInterface
+    private static function checkFactoryManager($method)
     {
         if (!isset(static::$httpFactoryManager)) {
-            throw new \Exception(sprintf(
-                'Method %s::%s requires you setHttpFactoryManager on %s.',
-                __CLASS__, __METHOD__, __CLASS__
+            throw new LogicException(sprintf(
+                'Method %s requires assign setHttpFactoryManager',
+                $method
             ));
         }
+    }
+
+    public static function getCurrentRequest() : ServerRequestInterface
+    {
+        static::checkFactoryManager(__METHOD__);
 
         $requestFactory = static::$httpFactoryManager->getServerRequestFactory();
         $uriFactory     = static::$httpFactoryManager->getUriFactory();
@@ -124,12 +132,7 @@ class MessageHelper
 
     public static function withContent(MessageInterface $message, string $mediaType, $content) : MessageInterface
     {
-        if (!isset(static::$httpFactoryManager)) {
-            throw new \Exception(sprintf(
-                'Method %s::%s requires you setHttpFactoryManager on %s.',
-                __CLASS__, __METHOD__, __CLASS__
-            ));
-        }
+        static::checkFactoryManager(__METHOD__);
 
         $parser = BodyParserHandler::find($mediaType);
         $streamFactory = static::$httpFactoryManager->getStreamFactory();
@@ -143,6 +146,20 @@ class MessageHelper
         return $message
             ->withBody($body)
             ->withHeader('Content-Type', $mediaType);
+    }
+
+    public static function makeRedirect($location, int $code = StatusCodes::REDIRECT_TEMPORARY_REDIRECT)
+    {
+        static::checkFactoryManager(__METHOD__);
+        $responseFactory = static::$httpFactoryManager->getResponseFactory();
+
+        if ($location instanceof UriInterface) {
+            $location = (string)$location;
+        }
+
+        return $responseFactory
+            ->createResponse($code)
+            ->withHeader('Location', $location);
     }
 
     public static function isInfo(ResponseInterface $response) : bool
