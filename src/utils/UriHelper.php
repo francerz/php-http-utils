@@ -71,6 +71,26 @@ class UriHelper
         }
         return $params[$key];
     }
+
+    /**
+     * Copies existant query parameters from one URI to another.
+     *
+     * @param UriInterface $sourceUri
+     * @param UriInterface $destUri
+     * @param array $params An array with the parameter keys.
+     * Associative array will represent source and target and query names.
+     * @return UriInterface
+     */
+    public static function copyQueryParams(UriInterface $sourceUri, UriInterface $destUri, array $params = []) : UriInterface
+    {
+        $copies = [];
+        foreach ($params as $source => $target) {
+            $source = is_numeric($source) ? $target : $source;
+            $copies[$target] = UriHelper::getQueryParam($sourceUri, $source);
+        }
+        
+        return UriHelper::withQueryParams($destUri, $copies);
+    }
     #endregion
 
     #region FragmentParams
