@@ -9,9 +9,10 @@ use Psr\Http\Message\UriInterface;
 class UriHelper
 {
     # region Private methods
-    private static function mixUrlEncodedParams(string $encoded_string, array $map, $replace = true) : string
+    private static function mixUrlEncodedParams(string $encoded_string, array $map, $replace = true, $toString = true) : string
     {
         parse_str($encoded_string, $params);
+        if ($toString) $map = array_map(function($v) { return (string)$v; }, $map);
         $params = $replace ? array_merge($params, $map) : array_merge($map, $params);
         return http_build_query($params);
     }
@@ -43,13 +44,13 @@ class UriHelper
     #endregion
 
     #region QueryParams
-    public static function withQueryParam(UriInterface $uri, string $key, $value) : UriInterface
+    public static function withQueryParam(UriInterface $uri, string $key, $value, bool $toString = true) : UriInterface
     {
-        return $uri->withQuery(static::mixUrlEncodedParams($uri->getQuery(), [$key => $value]));
+        return $uri->withQuery(static::mixUrlEncodedParams($uri->getQuery(), [$key => $value], true, $toString));
     }
-    public static function withQueryParams(UriInterface $uri, array $params, $replace = true) : UriInterface
+    public static function withQueryParams(UriInterface $uri, array $params, $replace = true, bool $toString = true) : UriInterface
     {
-        return $uri->withQuery(static::mixUrlEncodedParams($uri->getQuery(), $params, $replace));
+        return $uri->withQuery(static::mixUrlEncodedParams($uri->getQuery(), $params, $replace, $toString));
     }
     public static function withoutQueryParam(UriInterface $uri, string $key, &$value = null) : UriInterface
     {
