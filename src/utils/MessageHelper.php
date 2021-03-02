@@ -162,6 +162,18 @@ class MessageHelper
             ->withHeader('Location', $location);
     }
 
+    public static function createResponseFromFile($filename) : ResponseInterface
+    {
+        static::checkFactoryManager(__METHOD__);
+        $responseFactory = static::$httpFactoryManager->getResponseFactory();
+        $streamFactory = static::$httpFactoryManager->getStreamFactory();
+
+        return $responseFactory
+            ->createResponse()
+            ->withHeader('Content-Type', mime_content_type($filename))
+            ->withBody($streamFactory->createStreamFromFile($filename));
+    }
+
     public static function isInfo(ResponseInterface $response) : bool
     {
         return $response->getStatusCode() >= 100 && $response->getStatusCode() < 200;
