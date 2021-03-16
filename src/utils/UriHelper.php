@@ -184,4 +184,12 @@ class UriHelper
         $path = $uri->getPath();
         return explode('/', ltrim($path,'/'));
     }
+
+    public static function isValid($uri) : bool
+    {
+        if (is_object($uri) && method_exists($uri, '__toString')) {
+            $uri = (string) $uri;
+        }
+        return filter_var($uri, FILTER_VALIDATE_URL);
+    }
 }
