@@ -9,6 +9,7 @@ use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\UploadedFileFactoryInterface;
 use Psr\Http\Message\UriFactoryInterface;
+use stdClass;
 
 class HttpFactoryManager
 {
@@ -19,10 +20,10 @@ class HttpFactoryManager
     private $uploadedFileFactory;
     private $uriFactory;
 
-    public function __construct($defaultFactory = null)
+    public function __construct(...$defaultFactories)
     {
-        if (isset($defaultFactory)) {
-            $this->setMatchingFactories($defaultFactory);
+        foreach($defaultFactories as $f) {
+            $this->setMatchingFactories($f);
         }
     }
 
