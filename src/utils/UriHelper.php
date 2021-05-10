@@ -192,4 +192,18 @@ class UriHelper
         }
         return filter_var($uri, FILTER_VALIDATE_URL);
     }
+
+    public static function getUser(UriInterface $uri) : string
+    {
+        $explode = explode(':', $uri->getUserInfo());
+        return $explode[0];
+    }
+    public static function getPassword(UriInterface $uri) : string
+    {
+        $explode = explode(':', $uri->getUserInfo());
+        if (isset($explode[1])) {
+            return $explode[1];
+        }
+        return null;
+    }
 }
