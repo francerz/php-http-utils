@@ -162,16 +162,21 @@ class MessageHelper
             ->withHeader('Location', $location);
     }
 
-    public static function createResponseFromFile($filename) : ResponseInterface
+    public static function createResponseFromFile($filepath, $filename = null, $attachment = false) : ResponseInterface
     {
         static::checkFactoryManager(__METHOD__);
         $responseFactory = static::$httpFactoryManager->getResponseFactory();
         $streamFactory = static::$httpFactoryManager->getStreamFactory();
 
-        return $responseFactory
+        $response = $responseFactory
             ->createResponse()
-            ->withHeader('Content-Type', mime_content_type($filename))
-            ->withBody($streamFactory->createStreamFromFile($filename));
+            ->withHeader('Content-Type', mime_content_type($filepath))
+            ->withBody($streamFactory->createStreamFromFile($filepath));
+        if (isset($filename)) {
+            $disposition = $attachment ? 'attachment' : 'inline';
+            $response = $response->withHeader('Content-Disposition', "{$disposition};filename=\"{$filename}\"");
+        }
+        return $response;
     }
 
     public static function isInfo(ResponseInterface $response) : bool
