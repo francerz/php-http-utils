@@ -22,6 +22,18 @@ class HttpHelper
         $this->hfm = $hfm;
     }
 
+    public function getHttpFactoryManager()
+    {
+        return $this->hfm;
+    }
+
+    public function withHttpFactoryManager(HttpFactoryManager $hfm)
+    {
+        $new = clone $this;
+        $new->hfm = $hfm;
+        return $new;
+    }
+
     public function getCurrentRequest() : ServerRequestInterface
     {
         $requestFactory = $this->hfm->getServerRequestFactory();
