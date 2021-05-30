@@ -3,6 +3,13 @@
 namespace Francerz\Http\Utils;
 
 use Fig\Http\Message\StatusCodeInterface;
+use Francerz\Http\Utils\Exceptions\UploadFileExceedsFormMaxSizeException;
+use Francerz\Http\Utils\Exceptions\UploadFileExceedsIniMaxSizeException;
+use Francerz\Http\Utils\Exceptions\UploadFileFailedWriteException;
+use Francerz\Http\Utils\Exceptions\UploadFileMissedException;
+use Francerz\Http\Utils\Exceptions\UploadFileMissingTempFolderException;
+use Francerz\Http\Utils\Exceptions\UploadFilePartialException;
+use Francerz\Http\Utils\Exceptions\UploadFileStoppedByExtensionException;
 use Francerz\Http\Utils\Headers\AbstractAuthorizationHeader;
 use Francerz\Http\Utils\Headers\BasicAuthorizationHeader;
 use Francerz\Http\Utils\Headers\BearerAuthorizationHeader;
@@ -11,6 +18,7 @@ use InvalidArgumentException;
 use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\UploadedFileInterface;
 use Psr\Http\Message\UriInterface;
 
 class HttpHelper
@@ -181,6 +189,82 @@ class HttpHelper
         $authSch = static::$authenticationSchemeClasses[$type];
         $authHeader = new $authSch();
         return $authHeader->withCredentials($content);
+    }
+    #endregion
+
+    #region UploadedFile
+    public static function getFileClientExt(UploadedFileInterface $file)
+    {
+        $name = $file->getClientFilename();
+        return substr($name, strrpos($name, '.') + 1);
+    }
+
+    public static function getFileMediaType(UploadedFileInterface $file)
+    {
+        $meta = $file->getStream()->getMetadata();
+        if (!isset($meta['uri'])) {
+            return $file->getClientMediaType();
+        }
+
+        if (!is_file($meta['uri'])) {
+            return $file->getClientMediaType();
+        }
+
+        return mime_content_type($meta['uri']);
+    }
+
+    public static function isFileType(UploadedFileInterface $file, array $types)
+    {
+        $exts = array_filter($types, function($type) {
+            return strpos($type, '/') === false;
+        });
+        $mimes = array_filter($types, function($type) {
+            return strpos($type, '/') !== false;
+        });
+
+        if (empty($exts)) {
+            $exts = array_map(function($ext) {
+                return ltrim($ext, '.');
+            }, $exts);
+            $ext = static::getFileClientExt($file);
+            if (in_array($ext, $exts)) {
+                return true;
+            }
+        }
+
+        if (empty($mimes)) {
+            $mime = static::getFileMediaType($file);
+            if (in_array($mime, $mimes)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static function isFileExceededSize(UploadedFileInterface $file, int $maxSize)
+    {
+        return $file->getSize() > $maxSize;
+    }
+
+    public static function throwFileErrorException(UploadedFileInterface $file)
+    {
+        switch ($file->getError()) {
+            case UPLOAD_ERR_INI_SIZE:
+                throw new UploadFileExceedsIniMaxSizeException();
+            case UPLOAD_ERR_FORM_SIZE:
+                throw new UploadFileExceedsFormMaxSizeException();
+            case UPLOAD_ERR_PARTIAL:
+                throw new UploadFilePartialException();
+            case UPLOAD_ERR_NO_FILE:
+                throw new UploadFileMissedException();
+            case UPLOAD_ERR_NO_TMP_DIR:
+                throw new UploadFileMissingTempFolderException();
+            case UPLOAD_ERR_CANT_WRITE:
+                throw new UploadFileFailedWriteException();
+            case UPLOAD_ERR_EXTENSION:
+                throw new UploadFileStoppedByExtensionException();
+        }
     }
     #endregion
 
