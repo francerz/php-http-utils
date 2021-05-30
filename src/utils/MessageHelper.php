@@ -9,11 +9,13 @@ use Francerz\Http\Utils\Headers\BearerAuthorizationHeader;
 use InvalidArgumentException;
 use LogicException;
 use Psr\Http\Message\MessageInterface;
-use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 
+/**
+ * @deprecated v0.2.24
+ */
 class MessageHelper
 {
     private static $httpFactoryManager;

@@ -20,7 +20,7 @@ class BasicAuthorizationHeader extends AbstractAuthorizationHeader
 
         $new = clone $this;
         $new->user = $parts[0];
-        $new->password = $parts[1];
+        $new->password = $parts[1] ?? '';
         return $new;
     }
     public function getCredentials(): string
