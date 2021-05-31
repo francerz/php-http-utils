@@ -244,6 +244,19 @@ class HttpHelper
         }
         return $output;
     }
+
+    public static function isUploadedFileArray(array $files)
+    {
+        foreach ($files as $file) {
+            if (is_array($file)) {
+                if (!static::isUploadedFileArray($file)) return false;
+                continue;
+            }
+            if (!$file instanceof UploadedFileInterface) return false;
+        }
+        return true;
+    }
+
     public static function getFileClientExt(UploadedFileInterface $file)
     {
         $name = $file->getClientFilename();
