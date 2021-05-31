@@ -18,6 +18,7 @@ use InvalidArgumentException;
 use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileInterface;
 use Psr\Http\Message\UriInterface;
 
@@ -323,6 +324,15 @@ class HttpHelper
         }
     }
     #endregion
+
+    public static function getStreamSource(StreamInterface $stream) : ?string
+    {
+        $meta = $stream->getMetadata();
+        if (!isset($meta['uri'])) {
+            return null;
+        }
+        return $meta['uri'];
+    }
 
     public static function getContent(MessageInterface $message)
     {
