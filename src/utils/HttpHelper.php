@@ -242,7 +242,7 @@ class HttpHelper
                 $file['type']
             );
         }
-
+        return $output;
     }
     public static function getFileClientExt(UploadedFileInterface $file)
     {
