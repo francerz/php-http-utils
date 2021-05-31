@@ -193,6 +193,62 @@ class HttpHelper
     #endregion
 
     #region UploadedFile
+    public function createUploadedFile(
+        string $tmp_name,
+        ?int $size = null,
+        int $error = \UPLOAD_ERR_OK,
+        ?string $name = null,
+        ?string $type = null
+    ) {
+        $streamFactory = $this->hfm->getStreamFactory();
+        $uploadFactory = $this->hfm->getUploadedFileFactory();
+        $stream = $streamFactory->createStreamFromFile($tmp_name);
+        return $uploadFactory->createUploadedFile($stream, $size, $error, $name, $type);
+    }
+    private function normalizeFilesRecursive(array $tmp_name, array $size, array $error, array $name, array $type)
+    {
+        $output = [];
+
+        foreach ($tmp_name as $k => $file) {
+            if (!is_array($file)) {
+                $output[$k] = $this->createUploadedFile(
+                    $file['tmp_name'],
+                    $file['size'] ?? null,
+                    $file['error'],
+                    $file['name'] ?? null,
+                    $file['type'] ?? null
+                );
+                continue;
+            }
+            $output[$k] = $this->normalizeFilesRecursive($tmp_name[$k], $size[$k], $error[$k], $name[$k], $type[$k]);
+        }
+
+        return $output;
+    }
+    public function normalizeFiles(array $files)
+    {
+        $output = [];
+        foreach ($files as $name => $file) {
+            if (!is_array($file['error'])) {
+                $output[$name] = $this->createUploadedFile(
+                    $file['tmp_name'],
+                    $file['size'] ?? null,
+                    $file['error'],
+                    $file['name'] ?? null,
+                    $file['type'] ?? null
+                );
+                continue;
+            }
+            $output[$name] = $this->normalizeFilesRecursive(
+                $file['tmp_name'],
+                $file['size'],
+                $file['error'],
+                $file['name'],
+                $file['type']
+            );
+        }
+
+    }
     public static function getFileClientExt(UploadedFileInterface $file)
     {
         $name = $file->getClientFilename();
