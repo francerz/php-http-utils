@@ -212,13 +212,7 @@ class HttpHelper
 
         foreach ($tmp_name as $k => $file) {
             if (!is_array($file)) {
-                $output[$k] = $this->createUploadedFile(
-                    $file['tmp_name'],
-                    $file['size'] ?? null,
-                    $file['error'],
-                    $file['name'] ?? null,
-                    $file['type'] ?? null
-                );
+                $output[$k] = $this->createUploadedFile($tmp_name[$k], $size[$k], $error[$k], $name[$k], $type[$k]);
                 continue;
             }
             $output[$k] = $this->normalizeFilesRecursive($tmp_name[$k], $size[$k], $error[$k], $name[$k], $type[$k]);
@@ -258,16 +252,11 @@ class HttpHelper
 
     public static function getFileMediaType(UploadedFileInterface $file)
     {
-        $meta = $file->getStream()->getMetadata();
-        if (!isset($meta['uri'])) {
+        $uri = $file->getStream()->getMetadata('uri');
+        if (is_null($uri) || !is_file($uri)) {
             return $file->getClientMediaType();
         }
-
-        if (!is_file($meta['uri'])) {
-            return $file->getClientMediaType();
-        }
-
-        return mime_content_type($meta['uri']);
+        return mime_content_type($uri);
     }
 
     public static function isFileType(UploadedFileInterface $file, array $types)
@@ -324,15 +313,6 @@ class HttpHelper
         }
     }
     #endregion
-
-    public static function getStreamSource(StreamInterface $stream) : ?string
-    {
-        $meta = $stream->getMetadata();
-        if (!isset($meta['uri'])) {
-            return null;
-        }
-        return $meta['uri'];
-    }
 
     public static function getContent(MessageInterface $message)
     {
