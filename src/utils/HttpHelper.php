@@ -21,6 +21,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileInterface;
 use Psr\Http\Message\UriInterface;
+use RuntimeException;
 
 class HttpHelper
 {
@@ -113,6 +114,46 @@ class HttpHelper
             $disposition.= ",filename=\"{$filename}\"";
         }
         $response = $response->withHeader('Content-Disposition',$disposition);
+
+        return $response;
+    }
+
+    private static function importHeaders(ResponseInterface $response, string $headerString) : ResponseInterface
+    {
+        $headers = explode("\r\n", $headerString);
+
+        for ($i = 2; $i < count($headers); $i++) {
+            $h = $headers[$i];
+            if (empty($h)) continue;
+            if (stripos($h, 'HTTP') === 0) continue;
+            list($header, $hContent) = explode(':', $h);
+            $response = $response->withHeader($header, preg_split('/,\\s*/', trim($hContent)));
+        }
+
+        return $response;
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @param \CurlHandle $curl
+     * @param string $responseBody
+     * @return ResponseInterface
+     */
+    public function createResponseFromCURL($curl, string $responseBody = '') : ResponseInterface
+    {
+        $responseFactory = $this->hfm->getResponseFactory();
+        $streamFactory = $this->hfm->getStreamFactory();
+
+        $code = curl_getinfo($curl, CURLINFO_RESPONSE_CODE);
+        $response = $responseFactory->createResponse($code);
+
+        $headerSize = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
+        $headerString = trim(substr($responseBody, 0, $headerSize));
+        $response = static::importHeaders($response, $headerString);
+
+        $content = substr($responseBody, $headerSize);
+        $response = $response->withBody($streamFactory->createStream($content));
 
         return $response;
     }
@@ -326,6 +367,29 @@ class HttpHelper
         }
     }
     #endregion
+
+    public static function streamAppend(StreamInterface $stream, string $string)
+    {
+        if ($stream->tell() != $stream->getSize()) {
+            if (!$stream->isSeekable()) {
+                throw new RuntimeException('Stream cursor is out location and is not seekable');
+            }
+            $stream->seek(0, SEEK_END);
+        }
+        $stream->write($string);
+        return $stream;
+    }
+
+    public static function streamInsert(StreamInterface $stream, string $string)
+    {
+        if (!$stream->isSeekable()) {
+            throw new RuntimeException('Stream is not seekable');
+        }
+        $content = $string.(string)$stream;
+        $stream->seek(0, SEEK_SET);
+        $stream->write($content);
+        return $stream;
+    }
 
     public static function getContent(MessageInterface $message)
     {
