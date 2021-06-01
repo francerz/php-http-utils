@@ -204,7 +204,7 @@ class HttpHelper
         static::$authenticationSchemeClasses[$type] = $authenticationSchemeClass;
     }
 
-    public static function getAuthorizationHeaders(MessageInterface $message) : ?AbstractAuthorizationHeader
+    public static function getAuthorizationHeaders(MessageInterface $message) : ?array
     {
         $headers = $message->getHeader('Authorization');
 
