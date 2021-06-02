@@ -86,7 +86,7 @@ class HttpHelper
             ->withHeader('Content-Type', $mediaType);
     }
 
-    public function makeRedirect($location, int $code = StatusCodeInterface::STATUS_TEMPORARY_REDIRECT)
+    public function makeRedirect($location, int $code = StatusCodeInterface::STATUS_TEMPORARY_REDIRECT) : ResponseInterface
     {
         $responseFactory = $this->hfm->getResponseFactory();
 
@@ -99,7 +99,7 @@ class HttpHelper
             ->withHeader('Location', $location);
     }
 
-    public function createResponseFromFile($filepath, $filename = null, bool $attachment = false)
+    public function createResponseFromFile($filepath, $filename = null, bool $attachment = false) : ResponseInterface
     {
         $responseFactory = $this->hfm->getResponseFactory();
         $streamFactory = $this->hfm->getStreamFactory();
@@ -116,6 +116,16 @@ class HttpHelper
         $response = $response->withHeader('Content-Disposition',$disposition);
 
         return $response;
+    }
+
+    public function createResponse(string $content = '', int $code = 200) : ResponseInterface
+    {
+        $responseFactory = $this->hfm->getResponseFactory();
+        $streamFactory = $this->hfm->getStreamFactory();
+
+        return $responseFactory
+            ->createResponse($code)
+            ->withBody($streamFactory->createStream($content));
     }
 
     private static function importHeaders(ResponseInterface $response, string $headerString) : ResponseInterface
