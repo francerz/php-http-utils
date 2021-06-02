@@ -332,7 +332,7 @@ class HttpHelper
             return strpos($type, '/') !== false;
         });
 
-        if (empty($exts)) {
+        if (!empty($exts)) {
             $exts = array_map(function($ext) {
                 return ltrim($ext, '.');
             }, $exts);
@@ -342,7 +342,7 @@ class HttpHelper
             }
         }
 
-        if (empty($mimes)) {
+        if (!empty($mimes)) {
             $mime = static::getFileMediaType($file);
             if (in_array($mime, $mimes)) {
                 return true;
