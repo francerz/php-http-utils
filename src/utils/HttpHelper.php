@@ -111,7 +111,7 @@ class HttpHelper
         
         $disposition = $attachment ? 'attachment' : 'inline';
         if (isset($filename)) {
-            $disposition.= ",filename=\"{$filename}\"";
+            $disposition.= ";filename=\"{$filename}\"";
         }
         $response = $response->withHeader('Content-Disposition',$disposition);
 
