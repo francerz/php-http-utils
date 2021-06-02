@@ -313,8 +313,18 @@ class HttpHelper
         return mime_content_type($uri);
     }
 
-    public static function isFileType(UploadedFileInterface $file, array $types)
+    /**
+     * Checks if file matches with anny of given types
+     *
+     * @param UploadedFileInterface $file
+     * @param array|string $types
+     * @return boolean
+     */
+    public static function isFileType(UploadedFileInterface $file, $types)
     {
+        if (is_string($types)) {
+            $types = explode(',', $types);
+        }
         $exts = array_filter($types, function($type) {
             return strpos($type, '/') === false;
         });
