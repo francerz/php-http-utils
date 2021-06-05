@@ -126,19 +126,26 @@ class UriHelper
     #endregion
 
     #region Path
-    public static function appendPath(UriInterface $uri, string $path) : UriInterface
+    public static function appendPath(UriInterface $uri, string ...$segments) : UriInterface
     {
-        $path = static::startWithSlash($path);
+        $postpath = '';
+        foreach ($segments as $s) {
+            $postpath .= static::startWithSlash($s);
+        }
         $prepath = static::removeLastSlash($uri->getPath());
 
-        return $uri->withPath($prepath.$path);
+        return $uri->withPath($prepath.$postpath);
     }
-    public static function prependPath(UriInterface $uri, string $path) : UriInterface
+
+    public static function prependPath(UriInterface $uri, string ...$segments) : UriInterface
     {
-        $path = static::removeLastSlash($path);
+        $prepath = '';
+        foreach ($segments as $s) {
+            $prepath .= static::removeLastSlash($s);
+        }
         $postpath = static::startWithSlash($uri->getPath());
 
-        return $uri->withPath($path.$postpath);
+        return $uri->withPath($prepath.$postpath);
     }
     #endregion
 

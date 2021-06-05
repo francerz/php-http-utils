@@ -44,6 +44,11 @@ class HttpHelper
         return $new;
     }
 
+    public function getCurrentUri() : UriInterface
+    {
+        return UriHelper::getCurrent($this->hfm->getUriFactory());
+    }
+
     public function getCurrentRequest() : ServerRequestInterface
     {
         $requestFactory = $this->hfm->getServerRequestFactory();
