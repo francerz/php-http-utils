@@ -212,13 +212,16 @@ class UriHelper
             $defaultPort = 443;
         }
 
-        $uri = "{$scheme}://{$sapiVars['HTTP_HOST']}";
-
-        // Detecting port and comparing with default
-        if (isset($sapiVars['SERVER_PORT']) && ($port = $sapiVars['SERVER_PORT']) !== $defaultPort) {
-            $uri.= ":{$port}";
+        $host = $sapiVars['HTTP_HOST'] ?? null;
+        if (!isset($host)) {
+            $host = $sapiVars['SERVER_NAME'];
+            // Detecting port and comparing with default
+            if (isset($sapiVars['SERVER_PORT']) && ($port = $sapiVars['SERVER_PORT']) !== $defaultPort) {
+                $host.= ":{$port}";
+            }
         }
 
+        $uri = "{$scheme}://{$host}";
         $uri = rtrim($uri, '/') . '/' . ltrim($sapiVars['REQUEST_URI'], '/');
         return $uri;
     }

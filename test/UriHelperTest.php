@@ -61,8 +61,8 @@ class UriHelperTest extends TestCase
         $this->assertEquals(
             'https://localhost/public/assets/css/style.css',
             UriHelper::getBaseUrl('/assets/css/style.css',[
-                'HTTP_HOST'=>'localhost',
                 'HTTPS'=>'on',
+                'SERVER_NAME'=>'localhost',
                 'SERVER_PORT'=>443,
                 'SCRIPT_NAME' => '/public/index.php'
             ])
@@ -70,8 +70,8 @@ class UriHelperTest extends TestCase
         $this->assertEquals(
             'https://localhost:3000/public/assets/css/style.css',
             UriHelper::getBaseUrl('/assets/css/style.css',[
-                'HTTP_HOST'=>'localhost',
                 'HTTPS'=>'on',
+                'SERVER_NAME'=>'localhost',
                 'SERVER_PORT'=>3000,
                 'SCRIPT_NAME' => '/public/index.php'
             ])
@@ -83,8 +83,8 @@ class UriHelperTest extends TestCase
         $this->assertEquals(
             'https://localhost:3000/public/index.php/some/path',
             UriHelper::getSiteUrl('/some/path', [
-                'HTTP_HOST' => 'localhost',
                 'HTTPS' => 'on',
+                'SERVER_NAME' => 'localhost',
                 'SERVER_PORT' => 3000,
                 'SCRIPT_NAME' => '/public/index.php'
             ])
