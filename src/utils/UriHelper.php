@@ -182,7 +182,7 @@ class UriHelper
         return '/'.ltrim($pathInfo,'/');
     }
 
-    public static function getSiteUrl(?string $path = null, ?array $sapiVars = null)
+    public static function getSiteUrl(?string $path = null, array $sapiVars = [])
     {
         $sapiVars = array_merge($_SERVER, $sapiVars);
         $sapiVars['REQUEST_URI'] = $sapiVars['SCRIPT_NAME'] ?? '';
@@ -193,7 +193,7 @@ class UriHelper
         return $uri;
     }
 
-    public static function getBaseUrl(?string $path = null, ?array $sapiVars = null)
+    public static function getBaseUrl(?string $path = null, array $sapiVars = [])
     {
         $sapiVars = array_merge($_SERVER, $sapiVars);
         $scriptName = $sapiVars['SCRIPT_NAME'] ?? '';
@@ -201,9 +201,9 @@ class UriHelper
         return static::getSiteUrl($path, $sapiVars);
     }
 
-    private static function getCurrentString(?array $sapiVars = null)
+    private static function getCurrentString(array $sapiVars = [])
     {
-        $sapiVars = $sapiVars ?? $_SERVER;
+        $sapiVars = array_merge($_SERVER, $sapiVars);
 
         $scheme = 'http';
         $defaultPort = 80;
