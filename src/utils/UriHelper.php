@@ -182,11 +182,50 @@ class UriHelper
         return '/'.ltrim($pathInfo,'/');
     }
 
+    public static function getSiteUrl(?string $path = null, ?array $sapiVars = null)
+    {
+        $sapiVars = array_merge($_SERVER, $sapiVars);
+        $sapiVars['REQUEST_URI'] = $sapiVars['SCRIPT_NAME'] ?? '';
+        $uri = static::getCurrentString($sapiVars);
+        if (isset($path)) {
+            $uri = rtrim($uri,'/') .'/'. ltrim($path, '/');
+        }
+        return $uri;
+    }
+
+    public static function getBaseUrl(?string $path = null, ?array $sapiVars = null)
+    {
+        $sapiVars = array_merge($_SERVER, $sapiVars);
+        $scriptName = $sapiVars['SCRIPT_NAME'] ?? '';
+        $sapiVars['SCRIPT_NAME'] = substr_replace($scriptName, '', strrpos($scriptName, '/'));
+        return static::getSiteUrl($path, $sapiVars);
+    }
+
+    private static function getCurrentString(?array $sapiVars = null)
+    {
+        $sapiVars = $sapiVars ?? $_SERVER;
+
+        $scheme = 'http';
+        $defaultPort = 80;
+        if (!empty($sapiVars['HTTPS']) && $sapiVars['HTTPS'] != 'off') {
+            $scheme = 'https';
+            $defaultPort = 443;
+        }
+
+        $uri = "{$scheme}://{$sapiVars['HTTP_HOST']}";
+
+        // Detecting port and comparing with default
+        if (isset($sapiVars['SERVER_PORT']) && ($port = $sapiVars['SERVER_PORT']) !== $defaultPort) {
+            $uri.= ":{$port}";
+        }
+
+        $uri = rtrim($uri, '/') . '/' . ltrim($sapiVars['REQUEST_URI'], '/');
+        return $uri;
+    }
+
     public static function getCurrent(UriFactoryInterface $uriFactory) : UriInterface
     {
-        $uri = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' ? 'https': 'http';
-        $uri.= '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-        return $uriFactory->createUri($uri);
+        return $uriFactory->createUri(static::getCurrentString());
     }
 
     private static function mapReplaceString(string $uri, array $replaces, bool $encode_values = true) : string

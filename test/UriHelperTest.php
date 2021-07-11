@@ -32,4 +32,62 @@ class UriHelperTest extends TestCase
         $this->assertEquals('/some/path', UriHelper::getPathInfo('/webapp/some/path', '/webapp'));
         $this->assertEquals('/some/path', UriHelper::getPathInfo('/webapp/index.php/some/path?var=data', '/webapp/index.php'));
     }
+
+    public function testGetBaseUrl()
+    {
+        $this->assertEquals(
+            'http://localhost/assets/css/style.css',
+            UriHelper::getBaseUrl('/assets/css/style.css',[
+                'HTTP_HOST'=>'localhost',
+                'SCRIPT_NAME' => '/index.php'
+            ])
+        );
+        $this->assertEquals(
+            'https://localhost/assets/css/style.css',
+            UriHelper::getBaseUrl('/assets/css/style.css',[
+                'HTTP_HOST'=>'localhost',
+                'HTTPS'=>'on',
+                'SCRIPT_NAME' => '/index.php'
+            ])
+        );
+        $this->assertEquals(
+            'https://localhost/public/assets/css/style.css',
+            UriHelper::getBaseUrl('/assets/css/style.css',[
+                'HTTP_HOST'=>'localhost',
+                'HTTPS'=>'on',
+                'SCRIPT_NAME' => '/public/index.php'
+            ])
+        );
+        $this->assertEquals(
+            'https://localhost/public/assets/css/style.css',
+            UriHelper::getBaseUrl('/assets/css/style.css',[
+                'HTTP_HOST'=>'localhost',
+                'HTTPS'=>'on',
+                'SERVER_PORT'=>443,
+                'SCRIPT_NAME' => '/public/index.php'
+            ])
+        );
+        $this->assertEquals(
+            'https://localhost:3000/public/assets/css/style.css',
+            UriHelper::getBaseUrl('/assets/css/style.css',[
+                'HTTP_HOST'=>'localhost',
+                'HTTPS'=>'on',
+                'SERVER_PORT'=>3000,
+                'SCRIPT_NAME' => '/public/index.php'
+            ])
+        );
+    }
+
+    public function testGetSiteUrl()
+    {
+        $this->assertEquals(
+            'https://localhost:3000/public/index.php/some/path',
+            UriHelper::getSiteUrl('/some/path', [
+                'HTTP_HOST' => 'localhost',
+                'HTTPS' => 'on',
+                'SERVER_PORT' => 3000,
+                'SCRIPT_NAME' => '/public/index.php'
+            ])
+        );
+    }
 }
