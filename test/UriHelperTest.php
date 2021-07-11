@@ -21,4 +21,15 @@ class UriHelperTest extends TestCase
 
         $this->assertEquals('https://example.com/collection/20/30', $uri);
     }
+
+    public function testGetPathInfo()
+    {
+        $this->assertEquals('/some/path', UriHelper::getPathInfo('/some/path', '/'));
+        $this->assertEquals('/some/path', UriHelper::getPathInfo('/some/path', '/index.php'));
+        $this->assertEquals('/some/path', UriHelper::getPathInfo('/webapp/some/path', '/webapp/index.php'));
+        $this->assertEquals('/some/path', UriHelper::getPathInfo('/index.php/some/path', '/index.php'));
+        $this->assertEquals('/some/path', UriHelper::getPathInfo('/webapp/index.php/some/path', '/webapp/index.php'));
+        $this->assertEquals('/some/path', UriHelper::getPathInfo('/webapp/some/path', '/webapp'));
+        $this->assertEquals('/some/path', UriHelper::getPathInfo('/webapp/index.php/some/path?var=data', '/webapp/index.php'));
+    }
 }

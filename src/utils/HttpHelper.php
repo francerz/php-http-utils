@@ -44,6 +44,11 @@ class HttpHelper
         return $new;
     }
 
+    public function getPathInfo(?string $requestUri = null, ?string $scriptName = null) : string
+    {
+        return UriHelper::getPathInfo();
+    }
+
     public function getCurrentUri() : UriInterface
     {
         return UriHelper::getCurrent($this->hfm->getUriFactory());

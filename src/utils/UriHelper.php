@@ -149,6 +149,39 @@ class UriHelper
     }
     #endregion
 
+    /**
+     * Retrieves path info from URL.
+     * 
+     * Based upon Slim Framework
+     *
+     * @param ?string $requestUri
+     * @param ?string $scriptName
+     * @return string
+     */
+    public static function getPathInfo(?string $requestUri = null, ?string $scriptName = null) : string
+    {
+        $scriptName = $scriptName ?? $_SERVER['SCRIPT_NAME'];
+        $requestUri = $requestUri ?? $_SERVER['REQUEST_URI'];
+
+        $pathInfo = $requestUri;
+
+        // Removing Script name
+        if (strpos($requestUri, $scriptName) === 0) {
+            // Remove Script file from Request URI
+            $pathInfo = substr_replace($requestUri, '', 0, strlen($scriptName));
+        } elseif (strpos($requestUri, ($scriptDir = dirname($scriptName))) === 0) {
+            // Remove Script directory from Request URI (mod_rewrite)
+            $pathInfo = substr_replace($requestUri, '', 0, strlen($scriptDir));
+        }
+
+        // Removing Query String
+        if (($queryPos = strpos($pathInfo, '?')) !== false) {
+            $pathInfo = substr_replace($pathInfo, '', $queryPos);
+        }
+
+        return '/'.ltrim($pathInfo,'/');
+    }
+
     public static function getCurrent(UriFactoryInterface $uriFactory) : UriInterface
     {
         $uri = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' ? 'https': 'http';
