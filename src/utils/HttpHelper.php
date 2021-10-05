@@ -334,6 +334,23 @@ class HttpHelper
     }
 
     /**
+     * @param ServerRequestInterface $request
+     * @param string $key
+     * @return UploadedFileInterface|null
+     */
+    public static function getFile(ServerRequestInterface $request, string $key)
+    {
+        $files = $request->getUploadedFiles();
+        if (!isset($files[$key])) {
+            return null;
+        }
+        if ($files[$key] instanceof UploadedFileInterface) {
+            return $files[$key];
+        }
+        return null;
+    }
+
+    /**
      * Checks if file matches with anny of given types
      *
      * @param UploadedFileInterface $file
