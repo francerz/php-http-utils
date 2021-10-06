@@ -453,6 +453,16 @@ class HttpHelper
 
         return $parser->parse($message->getBody(), $type[0]);
     }
+
+    public static function redirectToScript()
+    {
+        $scriptName = $_SERVER['SCRIPT_NAME'];
+        $requestUri = $_SERVER['REQUEST_URI'];
+        if (strpos($requestUri, $scriptName) !== 0) {
+            header("Location: {$scriptName}");
+            exit;
+        }
+    }
 }
 
 HttpHelper::addAuthenticationScheme(BasicAuthorizationHeader::class);
