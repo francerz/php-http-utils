@@ -9,7 +9,6 @@ use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\UploadedFileFactoryInterface;
 use Psr\Http\Message\UriFactoryInterface;
-use stdClass;
 
 class HttpFactoryManager
 {
@@ -22,7 +21,7 @@ class HttpFactoryManager
 
     public function __construct(...$defaultFactories)
     {
-        foreach($defaultFactories as $f) {
+        foreach ($defaultFactories as $f) {
             $this->setMatchingFactories($f);
         }
     }
@@ -53,7 +52,7 @@ class HttpFactoryManager
     {
         $this->requestFactory = $requestFactory;
     }
-    public function getRequestFactory() : RequestFactoryInterface
+    public function getRequestFactory(): RequestFactoryInterface
     {
         if (!isset($this->requestFactory)) {
             throw new LogicException("RequestFactory is not set.");
@@ -64,7 +63,7 @@ class HttpFactoryManager
     {
         $this->responseFactory = $responseFactory;
     }
-    public function getResponseFactory() : ResponseFactoryInterface
+    public function getResponseFactory(): ResponseFactoryInterface
     {
         if (!isset($this->responseFactory)) {
             throw new LogicException("ResponseFactory is not set.");
@@ -75,7 +74,7 @@ class HttpFactoryManager
     {
         $this->serverRequestFactory = $serverRequestFactory;
     }
-    public function getServerRequestFactory() : ServerRequestFactoryInterface
+    public function getServerRequestFactory(): ServerRequestFactoryInterface
     {
         if (!isset($this->serverRequestFactory)) {
             throw new LogicException("ServerRequestFactory is not set.");
@@ -86,7 +85,7 @@ class HttpFactoryManager
     {
         $this->streamFactory = $streamFactory;
     }
-    public function getStreamFactory() : StreamFactoryInterface
+    public function getStreamFactory(): StreamFactoryInterface
     {
         if (!isset($this->streamFactory)) {
             throw new LogicException("StreamFactory is not set.");
@@ -97,7 +96,7 @@ class HttpFactoryManager
     {
         $this->uploadedFileFactory = $uploadedFileFactory;
     }
-    public function getUploadedFileFactory() : UploadedFileFactoryInterface
+    public function getUploadedFileFactory(): UploadedFileFactoryInterface
     {
         if (!isset($this->uploadedFileFactory)) {
             throw new LogicException("UploadedFileFactory is not set.");
@@ -108,7 +107,7 @@ class HttpFactoryManager
     {
         $this->uriFactory = $uriFactory;
     }
-    public function getUriFactory() : UriFactoryInterface
+    public function getUriFactory(): UriFactoryInterface
     {
         if (!isset($this->uriFactory)) {
             throw new LogicException("UriFactory is not set.");

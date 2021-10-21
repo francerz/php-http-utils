@@ -9,14 +9,18 @@ use Psr\Http\Message\UriInterface;
 class UriHelper
 {
     # region Private methods
-    private static function mixUrlEncodedParams(string $encoded_string, array $map, $replace = true, $toString = true) : string
+    private static function mixUrlEncodedParams(string $encoded_string, array $map, $replace = true, $toString = true): string
     {
         parse_str($encoded_string, $params);
-        if ($toString) $map = array_map(function($v) { return (string)$v; }, $map);
+        if ($toString) {
+            $map = array_map(function ($v) {
+                return (string)$v;
+            }, $map);
+        }
         $params = $replace ? array_merge($params, $map) : array_merge($map, $params);
         return http_build_query($params);
     }
-    private static function removeUrlEncodedParam(string $encoded_string, string $key, &$value = null) : string
+    private static function removeUrlEncodedParam(string $encoded_string, string $key, &$value = null): string
     {
         parse_str($encoded_string, $params);
         if (array_key_exists($key, $params)) {
@@ -27,14 +31,14 @@ class UriHelper
         return $encoded_string;
     }
 
-    private static function startWithSlash(?string $path) : string
+    private static function startWithSlash(?string $path): string
     {
         if (is_null($path)) {
             return '/';
         }
-        return strlen($path) === 0 || $path[0] !== '/' ? '/'.$path : $path;
+        return strlen($path) === 0 || $path[0] !== '/' ? '/' . $path : $path;
     }
-    private static function removeLastSlash(?string $path) : string
+    private static function removeLastSlash(?string $path): string
     {
         if (is_null($path)) {
             return '';
@@ -44,19 +48,19 @@ class UriHelper
     #endregion
 
     #region QueryParams
-    public static function withQueryParam(UriInterface $uri, string $key, $value, bool $toString = true) : UriInterface
+    public static function withQueryParam(UriInterface $uri, string $key, $value, bool $toString = true): UriInterface
     {
         return $uri->withQuery(static::mixUrlEncodedParams($uri->getQuery(), [$key => $value], true, $toString));
     }
-    public static function withQueryParams(UriInterface $uri, array $params, $replace = true, bool $toString = true) : UriInterface
+    public static function withQueryParams(UriInterface $uri, array $params, $replace = true, bool $toString = true): UriInterface
     {
         return $uri->withQuery(static::mixUrlEncodedParams($uri->getQuery(), $params, $replace, $toString));
     }
-    public static function withoutQueryParam(UriInterface $uri, string $key, &$value = null) : UriInterface
+    public static function withoutQueryParam(UriInterface $uri, string $key, &$value = null): UriInterface
     {
         return $uri->withQuery(static::removeUrlEncodedParam($uri->getQuery(), $key, $value));
     }
-    public static function getQueryParams(UriInterface $uri) : array
+    public static function getQueryParams(UriInterface $uri): array
     {
         parse_str($uri->getQuery(), $params);
         if (is_null($params)) {
@@ -64,7 +68,7 @@ class UriHelper
         }
         return $params;
     }
-    public static function getQueryParam(UriInterface $uri, string $key) : ?string
+    public static function getQueryParam(UriInterface $uri, string $key): ?string
     {
         $params = static::getQueryParams($uri);
         if (!array_key_exists($key, $params)) {
@@ -82,32 +86,32 @@ class UriHelper
      * Associative array will represent source and target and query names.
      * @return UriInterface
      */
-    public static function copyQueryParams(UriInterface $sourceUri, UriInterface $destUri, array $params = []) : UriInterface
+    public static function copyQueryParams(UriInterface $sourceUri, UriInterface $destUri, array $params = []): UriInterface
     {
         $copies = [];
         foreach ($params as $source => $target) {
             $source = is_numeric($source) ? $target : $source;
             $copies[$target] = UriHelper::getQueryParam($sourceUri, $source);
         }
-        
+
         return UriHelper::withQueryParams($destUri, $copies);
     }
     #endregion
 
     #region FragmentParams
-    public static function withFragmentParam(UriInterface $uri, string $key, $value) : UriInterface
+    public static function withFragmentParam(UriInterface $uri, string $key, $value): UriInterface
     {
         return $uri->withFragment(static::mixUrlEncodedParams($uri->getFragment(), [$key => $value]));
     }
-    public static function withFragmentParams(UriInterface $uri, array $params, $replace = true) : UriInterface
+    public static function withFragmentParams(UriInterface $uri, array $params, $replace = true): UriInterface
     {
         return $uri->withFragment(static::mixUrlEncodedParams($uri->getFragment(), $params, $replace));
     }
-    public static function withoutFragmentParam(UriInterface $uri, string $key, &$value = null) : UriInterface
+    public static function withoutFragmentParam(UriInterface $uri, string $key, &$value = null): UriInterface
     {
         return $uri->withFragment(static::removeUrlEncodedParam($uri->getFragment(), $key, $value));
     }
-    public static function getFragmentParams(UriInterface $uri) : array
+    public static function getFragmentParams(UriInterface $uri): array
     {
         parse_str($uri->getFragment(), $params);
         if (is_null($params)) {
@@ -115,7 +119,7 @@ class UriHelper
         }
         return $params;
     }
-    public static function getFragmentParam(UriInterface $uri, string $key) : ?string
+    public static function getFragmentParam(UriInterface $uri, string $key): ?string
     {
         $params = static::getFragmentParams($uri);
         if (!array_key_exists($key, $params)) {
@@ -126,7 +130,7 @@ class UriHelper
     #endregion
 
     #region Path
-    public static function appendPath(UriInterface $uri, string ...$segments) : UriInterface
+    public static function appendPath(UriInterface $uri, string ...$segments): UriInterface
     {
         $postpath = '';
         foreach ($segments as $s) {
@@ -134,10 +138,10 @@ class UriHelper
         }
         $prepath = static::removeLastSlash($uri->getPath());
 
-        return $uri->withPath($prepath.$postpath);
+        return $uri->withPath($prepath . $postpath);
     }
 
-    public static function prependPath(UriInterface $uri, string ...$segments) : UriInterface
+    public static function prependPath(UriInterface $uri, string ...$segments): UriInterface
     {
         $prepath = '';
         foreach ($segments as $s) {
@@ -145,7 +149,7 @@ class UriHelper
         }
         $postpath = static::startWithSlash($uri->getPath());
 
-        return $uri->withPath($prepath.$postpath);
+        return $uri->withPath($prepath . $postpath);
     }
     #endregion
 
@@ -158,7 +162,7 @@ class UriHelper
      * @param ?string $scriptName
      * @return string
      */
-    public static function getPathInfo(?string $requestUri = null, ?string $scriptName = null) : string
+    public static function getPathInfo(?string $requestUri = null, ?string $scriptName = null): string
     {
         $scriptName = $scriptName ?? $_SERVER['SCRIPT_NAME'];
         $requestUri = $requestUri ?? $_SERVER['REQUEST_URI'];
@@ -179,7 +183,7 @@ class UriHelper
             $pathInfo = substr_replace($pathInfo, '', $queryPos);
         }
 
-        return '/'.ltrim($pathInfo,'/');
+        return '/' . ltrim($pathInfo, '/');
     }
 
     public static function getSiteUrl(?string $path = null, array $sapiVars = [])
@@ -188,7 +192,7 @@ class UriHelper
         $sapiVars['REQUEST_URI'] = $sapiVars['SCRIPT_NAME'] ?? '';
         $uri = static::getCurrentString($sapiVars);
         if (isset($path)) {
-            $uri = rtrim($uri,'/') .'/'. ltrim($path, '/');
+            $uri = rtrim($uri, '/') . '/' . ltrim($path, '/');
         }
         return $uri;
     }
@@ -217,7 +221,7 @@ class UriHelper
             $host = $sapiVars['SERVER_NAME'];
             // Detecting port and comparing with default
             if (isset($sapiVars['SERVER_PORT']) && ($port = $sapiVars['SERVER_PORT']) !== $defaultPort) {
-                $host.= ":{$port}";
+                $host .= ":{$port}";
             }
         }
 
@@ -226,12 +230,12 @@ class UriHelper
         return $uri;
     }
 
-    public static function getCurrent(UriFactoryInterface $uriFactory) : UriInterface
+    public static function getCurrent(UriFactoryInterface $uriFactory): UriInterface
     {
         return $uriFactory->createUri(static::getCurrentString());
     }
 
-    private static function mapReplaceString(string $uri, array $replaces, bool $encode_values = true) : string
+    private static function mapReplaceString(string $uri, array $replaces, bool $encode_values = true): string
     {
         $match = preg_match_all('/\{([a-zA-Z0-9\-\_]+)\}/S', $uri, $matches);
         if (!$match) {
@@ -243,31 +247,31 @@ class UriHelper
                 continue;
             }
             $val = $encode_values ? urlencode($replaces[$match]) : $replaces[$match];
-            $uri = str_replace('{'.$match.'}', $val, $uri);
+            $uri = str_replace('{' . $match . '}', $val, $uri);
         }
         return $uri;
     }
 
-    public static function mapReplace(UriFactoryInterface $uriFactory, $uri, array $replaces, bool $encode_values = true) : UriInterface
+    public static function mapReplace(UriFactoryInterface $uriFactory, $uri, array $replaces, bool $encode_values = true): UriInterface
     {
         $uriStr = $uri;
         if ($uri instanceof UriInterface) {
             $uriStr = (string) $uri;
         }
         if (!is_string($uriStr)) {
-            throw new LogicException(__METHOD__.' $uri argument must be string or UriInterface object');
+            throw new LogicException(__METHOD__ . ' $uri argument must be string or UriInterface object');
         }
         $uriStr = static::mapReplaceString($uri, $replaces, $encode_values);
         return $uriFactory->createUri($uriStr);
     }
 
-    public static function getSegments(UriInterface $uri) : array
+    public static function getSegments(UriInterface $uri): array
     {
         $path = $uri->getPath();
-        return explode('/', ltrim($path,'/'));
+        return explode('/', ltrim($path, '/'));
     }
 
-    public static function isValid($uri) : bool
+    public static function isValid($uri): bool
     {
         if (is_object($uri) && method_exists($uri, '__toString')) {
             $uri = (string) $uri;
@@ -275,12 +279,12 @@ class UriHelper
         return filter_var($uri, FILTER_VALIDATE_URL);
     }
 
-    public static function getUser(UriInterface $uri) : string
+    public static function getUser(UriInterface $uri): string
     {
         $explode = explode(':', $uri->getUserInfo());
         return $explode[0];
     }
-    public static function getPassword(UriInterface $uri) : string
+    public static function getPassword(UriInterface $uri): string
     {
         $explode = explode(':', $uri->getUserInfo());
         if (isset($explode[1])) {

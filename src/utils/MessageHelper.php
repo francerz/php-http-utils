@@ -35,7 +35,7 @@ class MessageHelper
         }
     }
 
-    public static function getCurrentRequest() : ServerRequestInterface
+    public static function getCurrentRequest(): ServerRequestInterface
     {
         static::checkFactoryManager(__METHOD__);
 
@@ -84,15 +84,15 @@ class MessageHelper
         }
         if (!is_subclass_of($authenticationSchemeClass, AbstractAuthorizationHeader::class)) {
             throw new InvalidArgumentException(
-                'Authentication Scheme class MUST extend from '.
-                AbstractAuthorizationHeader::class
+                'Authentication Scheme class MUST extend from ' .
+                    AbstractAuthorizationHeader::class
             );
         }
         $type = $authenticationSchemeClass::getAuthorizationType();
         static::$authenticationSchemeClasses[$type] = $authenticationSchemeClass;
     }
 
-    public static function getFirstAuthorizationHeader(MessageInterface $message) : ?AbstractAuthorizationHeader
+    public static function getFirstAuthorizationHeader(MessageInterface $message): ?AbstractAuthorizationHeader
     {
         $header = $message->getHeader('Authorization');
 
@@ -132,7 +132,7 @@ class MessageHelper
         return $parser->parse($body, $type[0]);
     }
 
-    public static function withContent(MessageInterface $message, string $mediaType, $content) : MessageInterface
+    public static function withContent(MessageInterface $message, string $mediaType, $content): MessageInterface
     {
         static::checkFactoryManager(__METHOD__);
 
@@ -164,7 +164,7 @@ class MessageHelper
             ->withHeader('Location', $location);
     }
 
-    public static function createResponseFromFile($filepath, $filename = null, $attachment = false) : ResponseInterface
+    public static function createResponseFromFile($filepath, $filename = null, $attachment = false): ResponseInterface
     {
         static::checkFactoryManager(__METHOD__);
         $responseFactory = static::$httpFactoryManager->getResponseFactory();
@@ -181,27 +181,27 @@ class MessageHelper
         return $response;
     }
 
-    public static function isInfo(ResponseInterface $response) : bool
+    public static function isInfo(ResponseInterface $response): bool
     {
         return $response->getStatusCode() >= 100 && $response->getStatusCode() < 200;
     }
-    public static function isSuccess(ResponseInterface $response) : bool
+    public static function isSuccess(ResponseInterface $response): bool
     {
         return $response->getStatusCode() >= 200 && $response->getStatusCode() < 300;
     }
-    public static function isRedirect(ResponseInterface $response) : bool
+    public static function isRedirect(ResponseInterface $response): bool
     {
         return $response->getStatusCode() >= 300 && $response->getStatusCode() < 400;
     }
-    public static function isClientError(ResponseInterface $response) : bool
+    public static function isClientError(ResponseInterface $response): bool
     {
         return $response->getStatusCode() >= 400 && $response->getStatusCode() < 500;
     }
-    public static function isServerError(ResponseInterface $response) : bool
+    public static function isServerError(ResponseInterface $response): bool
     {
         return $response->getStatusCode() >= 500;
     }
-    public static function isError(ResponseInterface $response) : bool
+    public static function isError(ResponseInterface $response): bool
     {
         return $response->getStatusCode() >= 400;
     }

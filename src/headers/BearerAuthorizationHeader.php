@@ -26,17 +26,17 @@ class BearerAuthorizationHeader extends AbstractAuthorizationHeader
         $new->token = $token;
         return $new;
     }
-    public function getToken() : string
+    public function getToken(): string
     {
         return $this->token;
     }
-    
-    public static function getAuthorizationType() : string 
+
+    public static function getAuthorizationType(): string
     {
         return 'Bearer';
     }
     public function __toString()
     {
-        return 'Bearer '. $this->token;
+        return 'Bearer ' . $this->token;
     }
 }

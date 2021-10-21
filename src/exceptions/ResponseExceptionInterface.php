@@ -7,6 +7,6 @@ use Psr\Http\Message\ResponseInterface;
 
 interface ResponseExceptionInterface
 {
-    public function getRequest() : RequestInterface;
-    public function getResponse() : ResponseInterface;
+    public function getRequest(): RequestInterface;
+    public function getResponse(): ResponseInterface;
 }

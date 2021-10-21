@@ -34,7 +34,7 @@ class BasicAuthorizationHeader extends AbstractAuthorizationHeader
         $new->user = $user;
         return $new;
     }
-    public function getUser() : string
+    public function getUser(): string
     {
         return $this->user;
     }
@@ -44,17 +44,17 @@ class BasicAuthorizationHeader extends AbstractAuthorizationHeader
         $new->password = $password;
         return $new;
     }
-    public function getPassword() : string
+    public function getPassword(): string
     {
         return $this->password;
     }
-    
+
     public static function getAuthorizationType(): string
     {
         return 'Basic';
     }
     public function __toString()
     {
-        return 'Basic '.base64_encode($this->user . ':' . $this->password);
+        return 'Basic ' . base64_encode($this->user . ':' . $this->password);
     }
 }

@@ -44,17 +44,17 @@ class HttpHelper
         return $new;
     }
 
-    public function getPathInfo(?string $requestUri = null, ?string $scriptName = null) : string
+    public function getPathInfo(?string $requestUri = null, ?string $scriptName = null): string
     {
         return UriHelper::getPathInfo();
     }
 
-    public function getCurrentUri() : UriInterface
+    public function getCurrentUri(): UriInterface
     {
         return UriHelper::getCurrent($this->hfm->getUriFactory());
     }
 
-    public function getCurrentRequest() : ServerRequestInterface
+    public function getCurrentRequest(): ServerRequestInterface
     {
         $requestFactory = $this->hfm->getServerRequestFactory();
         $uriFactory     = $this->hfm->getUriFactory();
@@ -71,7 +71,7 @@ class HttpHelper
             ->createServerRequest($method, $uri, $_SERVER)
             ->withProtocolVersion($sp)
             ->withBody($body);
-        
+
         $headers = getallheaders();
         foreach ($headers as $hname => $hcontent) {
             $request = $request->withHeader($hname, preg_split('/(,\\s*)/', $hcontent));
@@ -96,7 +96,7 @@ class HttpHelper
             ->withHeader('Content-Type', $mediaType);
     }
 
-    public function makeRedirect($location, int $code = StatusCodeInterface::STATUS_TEMPORARY_REDIRECT) : ResponseInterface
+    public function makeRedirect($location, int $code = StatusCodeInterface::STATUS_TEMPORARY_REDIRECT): ResponseInterface
     {
         $responseFactory = $this->hfm->getResponseFactory();
 
@@ -109,7 +109,7 @@ class HttpHelper
             ->withHeader('Location', $location);
     }
 
-    public function createResponseFromFile($filepath, $filename = null, bool $attachment = false) : ResponseInterface
+    public function createResponseFromFile($filepath, $filename = null, bool $attachment = false): ResponseInterface
     {
         $responseFactory = $this->hfm->getResponseFactory();
         $streamFactory = $this->hfm->getStreamFactory();
@@ -118,17 +118,17 @@ class HttpHelper
             ->createResponse()
             ->withHeader('Content-Type', mime_content_type($filepath))
             ->withBody($streamFactory->createStreamFromFile($filepath));
-        
+
         $disposition = $attachment ? 'attachment' : 'inline';
         if (isset($filename)) {
-            $disposition.= ";filename=\"{$filename}\"";
+            $disposition .= ";filename=\"{$filename}\"";
         }
-        $response = $response->withHeader('Content-Disposition',$disposition);
+        $response = $response->withHeader('Content-Disposition', $disposition);
 
         return $response;
     }
 
-    public function createResponse(string $content = '', int $code = 200) : ResponseInterface
+    public function createResponse(string $content = '', int $code = 200): ResponseInterface
     {
         $responseFactory = $this->hfm->getResponseFactory();
         $streamFactory = $this->hfm->getStreamFactory();
@@ -138,14 +138,18 @@ class HttpHelper
             ->withBody($streamFactory->createStream($content));
     }
 
-    private static function importHeaders(ResponseInterface $response, string $headerString) : ResponseInterface
+    private static function importHeaders(ResponseInterface $response, string $headerString): ResponseInterface
     {
         $headers = explode("\r\n", $headerString);
 
         for ($i = 2; $i < count($headers); $i++) {
             $h = $headers[$i];
-            if (empty($h)) continue;
-            if (stripos($h, 'HTTP') === 0) continue;
+            if (empty($h)) {
+                continue;
+            }
+            if (stripos($h, 'HTTP') === 0) {
+                continue;
+            }
             list($header, $hContent) = explode(':', $h);
             $response = $response->withHeader($header, preg_split('/,\\s*/', trim($hContent)));
         }
@@ -156,11 +160,11 @@ class HttpHelper
     /**
      * Undocumented function
      *
-     * @param \CurlHandle $curl
+     * @param \CurlHandle|resource $curl
      * @param string $responseBody
      * @return ResponseInterface
      */
-    public function createResponseFromCURL($curl, string $responseBody = '') : ResponseInterface
+    public function createResponseFromCURL($curl, string $responseBody = ''): ResponseInterface
     {
         $responseFactory = $this->hfm->getResponseFactory();
         $streamFactory = $this->hfm->getStreamFactory();
@@ -179,27 +183,27 @@ class HttpHelper
     }
 
     #region StatusCheckers
-    public static function isInfo(ResponseInterface $response) : bool
+    public static function isInfo(ResponseInterface $response): bool
     {
         return $response->getStatusCode() >= 100 && $response->getStatusCode() < 200;
     }
-    public static function isSuccess(ResponseInterface $response) : bool
+    public static function isSuccess(ResponseInterface $response): bool
     {
         return $response->getStatusCode() >= 200 && $response->getStatusCode() < 300;
     }
-    public static function isRedirect(ResponseInterface $response) : bool
+    public static function isRedirect(ResponseInterface $response): bool
     {
         return $response->getStatusCode() >= 300 && $response->getStatusCode() < 400;
     }
-    public static function isClientError(ResponseInterface $response) : bool
+    public static function isClientError(ResponseInterface $response): bool
     {
         return $response->getStatusCode() >= 400 && $response->getStatusCode() < 500;
     }
-    public static function isServerError(ResponseInterface $response) : bool
+    public static function isServerError(ResponseInterface $response): bool
     {
         return $response->getStatusCode() >= 500;
     }
-    public static function isError(ResponseInterface $response) : bool
+    public static function isError(ResponseInterface $response): bool
     {
         return $response->getStatusCode() >= 400;
     }
@@ -224,7 +228,7 @@ class HttpHelper
         static::$authenticationSchemeClasses[$type] = $authenticationSchemeClass;
     }
 
-    public static function getAuthorizationHeaders(MessageInterface $message) : ?array
+    public static function getAuthorizationHeaders(MessageInterface $message): ?array
     {
         $headers = $message->getHeader('Authorization');
 
@@ -310,10 +314,14 @@ class HttpHelper
     {
         foreach ($files as $file) {
             if (is_array($file)) {
-                if (!static::isUploadedFileArray($file)) return false;
+                if (!static::isUploadedFileArray($file)) {
+                    return false;
+                }
                 continue;
             }
-            if (!$file instanceof UploadedFileInterface) return false;
+            if (!$file instanceof UploadedFileInterface) {
+                return false;
+            }
         }
         return true;
     }
@@ -362,15 +370,15 @@ class HttpHelper
         if (is_string($types)) {
             $types = explode(',', $types);
         }
-        $exts = array_filter($types, function($type) {
+        $exts = array_filter($types, function ($type) {
             return strpos($type, '/') === false;
         });
-        $mimes = array_filter($types, function($type) {
+        $mimes = array_filter($types, function ($type) {
             return strpos($type, '/') !== false;
         });
 
         if (!empty($exts)) {
-            $exts = array_map(function($ext) {
+            $exts = array_map(function ($ext) {
                 return ltrim($ext, '.');
             }, $exts);
             $ext = static::getFileClientExt($file);
@@ -432,7 +440,7 @@ class HttpHelper
         if (!$stream->isSeekable()) {
             throw new RuntimeException('Stream is not seekable');
         }
-        $content = $string.(string)$stream;
+        $content = $string . (string)$stream;
         $stream->seek(0, SEEK_SET);
         $stream->write($content);
         return $stream;

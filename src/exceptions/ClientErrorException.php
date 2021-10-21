@@ -24,12 +24,12 @@ class ClientErrorException extends Exception implements ResponseExceptionInterfa
         $this->response = $response;
     }
 
-    public function getRequest() : RequestInterface
+    public function getRequest(): RequestInterface
     {
         return $this->request;
     }
-    
-    public function getResponse() : ResponseInterface
+
+    public function getResponse(): ResponseInterface
     {
         return $this->response;
     }

@@ -15,12 +15,14 @@ class BodyParserHandler
     {
         if (!is_subclass_of($bodyParserClass, BodyParserInterface::class)) {
             throw new InvalidArgumentException(
-                sprintf('Parser class MUST implement %s.',
-                BodyParserInterface::class)
+                sprintf(
+                    'Parser class MUST implement %s.',
+                    BodyParserInterface::class
+                )
             );
         }
 
-        $filter = array_filter(static::$parsers, function($v) use ($bodyParserClass) {
+        $filter = array_filter(static::$parsers, function ($v) use ($bodyParserClass) {
             return $v instanceof $bodyParserClass;
         });
 
@@ -34,7 +36,7 @@ class BodyParserHandler
         }
     }
 
-    public static function find(string $type) : ?BodyParserInterface
+    public static function find(string $type): ?BodyParserInterface
     {
         $lim = strpos($type, ';');
         $type = strtolower($lim === false ? $type : substr($type, 0, $lim));
