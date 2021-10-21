@@ -9,12 +9,19 @@ use Psr\Http\Message\UriInterface;
 class UriHelper
 {
     # region Private methods
-    private static function mixUrlEncodedParams(string $encoded_string, array $map, $replace = true, $toString = true): string
-    {
+    private static function mixUrlEncodedParams(
+        string $encoded_string,
+        array $map,
+        bool $replace = true,
+        bool $toString = true
+    ): string {
         parse_str($encoded_string, $params);
         if ($toString) {
             $map = array_map(function ($v) {
-                return (string)$v;
+                if (is_object($v)) {
+                    return (string)$v;
+                }
+                return $v;
             }, $map);
         }
         $params = $replace ? array_merge($params, $map) : array_merge($map, $params);
