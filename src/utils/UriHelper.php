@@ -162,7 +162,7 @@ class UriHelper
 
     /**
      * Retrieves path info from URL.
-     * 
+     *
      * Based upon Slim Framework
      *
      * @param ?string $requestUri
@@ -298,5 +298,19 @@ class UriHelper
             return $explode[1];
         }
         return null;
+    }
+
+    public static function base64Encode(string $data)
+    {
+        return strtr(base64_encode($data), ['+' => '-', '/' => '_', '=' => '']);
+    }
+
+    public static function base64Decode(string $base64, bool $strict = false)
+    {
+        return base64_decode(
+            strtr($base64, '-_', '+/'),
+            str_repeat('=', - strlen($base64) & 3),
+            $strict
+        );
     }
 }
