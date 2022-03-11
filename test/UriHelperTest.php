@@ -3,6 +3,9 @@
 use Francerz\Http\Utils\UriHelper;
 use PHPUnit\Framework\TestCase;
 
+use function Francerz\Http\Utils\baseUrl;
+use function Francerz\Http\Utils\siteUrl;
+
 class UriHelperTest extends TestCase
 {
     private static function callPrivateStatic($obj, string $method, ...$args)
@@ -55,7 +58,7 @@ class UriHelperTest extends TestCase
     {
         $this->assertEquals(
             'http://localhost/assets/css/style.css',
-            UriHelper::getBaseUrl('/assets/css/style.css', [
+            baseUrl('/assets/css/style.css', [
                 'HTTP_HOST' => 'localhost',
                 'SCRIPT_NAME' => '/index.php'
             ])
@@ -100,7 +103,7 @@ class UriHelperTest extends TestCase
     {
         $this->assertEquals(
             'https://localhost:3000/public/index.php/some/path',
-            UriHelper::getSiteUrl('/some/path', [
+            siteUrl('/some/path', [
                 'HTTPS' => 'on',
                 'SERVER_NAME' => 'localhost',
                 'SERVER_PORT' => 3000,

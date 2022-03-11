@@ -16,6 +16,7 @@
         }
     ],
     "autoload": {
+        "files": [ "src/functions.php" ],
         "psr-4": {
             "Francerz\\Http\\Utils\\": "src/utils",
             "Francerz\\Http\\Utils\\Headers\\": "src/headers",
