@@ -308,7 +308,7 @@ class UriHelper
     public static function base64Decode(string $base64, bool $strict = false)
     {
         return base64_decode(
-            strtr($base64, '-_', '+/'),
+            strtr($base64, '-_', '+/') .
             str_repeat('=', - strlen($base64) & 3),
             $strict
         );
