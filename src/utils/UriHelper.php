@@ -212,7 +212,7 @@ class UriHelper
         return static::getSiteUrl($path, $sapiVars);
     }
 
-    private static function getCurrentString(array $sapiVars = [])
+    public static function getCurrentString(array $sapiVars = [])
     {
         $sapiVars = array_merge($_SERVER, $sapiVars);
 
