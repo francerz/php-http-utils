@@ -158,6 +158,18 @@ class UriHelper
 
         return $uri->withPath($prepath . $postpath);
     }
+
+    /**
+     * @param UriInterface $uri
+     * @param string $pattern
+     * @return array
+     */
+    public static function getPathParams(string $uri, string $pattern)
+    {
+        $pattern = '/([-_\w\d])/';
+        $match = preg_match_all($pattern, $uri, $matches);
+        return $matches;
+    }
     #endregion
 
     /**
@@ -193,27 +205,32 @@ class UriHelper
         return '/' . ltrim($pathInfo, '/');
     }
 
-    public static function getSiteUrl(?string $path = null, array $sapiVars = [])
+    public static function getSiteUrl(?string $path = null, array $sapiVars = [], bool $cached = true)
     {
         $sapiVars = array_merge($_SERVER, $sapiVars);
         $sapiVars['REQUEST_URI'] = $sapiVars['SCRIPT_NAME'] ?? '';
-        $uri = static::getCurrentString($sapiVars);
+        $uri = static::getCurrentString($sapiVars, $cached);
         if (isset($path)) {
             $uri = rtrim($uri, '/') . '/' . ltrim($path, '/');
         }
         return $uri;
     }
 
-    public static function getBaseUrl(?string $path = null, array $sapiVars = [])
+    public static function getBaseUrl(?string $path = null, array $sapiVars = [], bool $cached = true)
     {
         $sapiVars = array_merge($_SERVER, $sapiVars);
         $scriptName = $sapiVars['SCRIPT_NAME'] ?? '';
         $sapiVars['SCRIPT_NAME'] = substr_replace($scriptName, '', strrpos($scriptName, '/'));
-        return static::getSiteUrl($path, $sapiVars);
+        return static::getSiteUrl($path, $sapiVars, $cached);
     }
 
-    private static function getCurrentString(array $sapiVars = [])
+    private static function getCurrentString(array $sapiVars = [], bool $cached = true)
     {
+        static $uri;
+        if ($cached && isset($uri)) {
+            return $uri;
+        }
+
         $sapiVars = array_merge($_SERVER, $sapiVars);
 
         $scheme = 'http';
@@ -291,6 +308,7 @@ class UriHelper
         $explode = explode(':', $uri->getUserInfo());
         return $explode[0];
     }
+
     public static function getPassword(UriInterface $uri): string
     {
         $explode = explode(':', $uri->getUserInfo());

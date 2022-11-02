@@ -61,7 +61,7 @@ class UriHelperTest extends TestCase
             baseUrl('/assets/css/style.css', [
                 'HTTP_HOST' => 'localhost',
                 'SCRIPT_NAME' => '/index.php'
-            ])
+            ], false)
         );
         $this->assertEquals(
             'https://localhost/assets/css/style.css',
@@ -69,7 +69,7 @@ class UriHelperTest extends TestCase
                 'HTTP_HOST' => 'localhost',
                 'HTTPS' => 'on',
                 'SCRIPT_NAME' => '/index.php'
-            ])
+            ], false)
         );
         $this->assertEquals(
             'https://localhost/public/assets/css/style.css',
@@ -77,7 +77,7 @@ class UriHelperTest extends TestCase
                 'HTTP_HOST' => 'localhost',
                 'HTTPS' => 'on',
                 'SCRIPT_NAME' => '/public/index.php'
-            ])
+            ], false)
         );
         $this->assertEquals(
             'https://localhost/public/assets/css/style.css',
@@ -86,7 +86,7 @@ class UriHelperTest extends TestCase
                 'SERVER_NAME' => 'localhost',
                 'SERVER_PORT' => 443,
                 'SCRIPT_NAME' => '/public/index.php'
-            ])
+            ], false)
         );
         $this->assertEquals(
             'https://localhost:3000/public/assets/css/style.css',
@@ -95,7 +95,7 @@ class UriHelperTest extends TestCase
                 'SERVER_NAME' => 'localhost',
                 'SERVER_PORT' => 3000,
                 'SCRIPT_NAME' => '/public/index.php'
-            ])
+            ], false)
         );
     }
 
@@ -108,7 +108,14 @@ class UriHelperTest extends TestCase
                 'SERVER_NAME' => 'localhost',
                 'SERVER_PORT' => 3000,
                 'SCRIPT_NAME' => '/public/index.php'
-            ])
+            ], false)
         );
+    }
+
+    public function testGetPathParams()
+    {
+        $matches = UriHelper::getPathParams('/a/1/b/2', '/a/{a}/b/{b}');
+        var_dump($matches);
+        $this->assertTrue(true);
     }
 }
