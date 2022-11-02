@@ -224,7 +224,7 @@ class UriHelper
         return static::getSiteUrl($path, $sapiVars, $cached);
     }
 
-    private static function getCurrentString(array $sapiVars = [], bool $cached = true)
+    public static function getCurrentString(array $sapiVars = [], bool $cached = true)
     {
         static $uri;
         if ($cached && isset($uri)) {
@@ -276,8 +276,12 @@ class UriHelper
         return $uri;
     }
 
-    public static function mapReplace(UriFactoryInterface $uriFactory, $uri, array $replaces, bool $encode_values = true): UriInterface
-    {
+    public static function mapReplace(
+        UriFactoryInterface $uriFactory,
+        $uri,
+        array $replaces,
+        bool $encode_values = true
+    ): UriInterface {
         $uriStr = $uri;
         if ($uri instanceof UriInterface) {
             $uriStr = (string) $uri;
@@ -326,7 +330,7 @@ class UriHelper
     public static function base64Decode(string $base64, bool $strict = false)
     {
         return base64_decode(
-            strtr($base64, '-_', '+/'),
+            strtr($base64, '-_', '+/') .
             str_repeat('=', - strlen($base64) & 3),
             $strict
         );
