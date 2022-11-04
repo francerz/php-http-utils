@@ -256,7 +256,9 @@ class UriHelper
 
     public static function getCurrent(UriFactoryInterface $uriFactory): UriInterface
     {
-        return $uriFactory->createUri(static::getCurrentString());
+        return $uriFactory
+            ->createUri(static::getCurrentString())
+            ->withQuery($_SERVER['QUERY_STRING'] ?? '');
     }
 
     private static function mapReplaceString(string $uri, array $replaces, bool $encode_values = true): string
