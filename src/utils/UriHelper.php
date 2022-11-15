@@ -205,7 +205,7 @@ class UriHelper
         return '/' . ltrim($pathInfo, '/');
     }
 
-    public static function getSiteUrl(?string $path = null, array $sapiVars = [], bool $cached = true)
+    public static function getSiteUrl(?string $path = null, array $sapiVars = [], bool $cached = false)
     {
         $sapiVars = array_merge($_SERVER, $sapiVars);
         $sapiVars['REQUEST_URI'] = $sapiVars['SCRIPT_NAME'] ?? '';
@@ -216,7 +216,7 @@ class UriHelper
         return $uri;
     }
 
-    public static function getBaseUrl(?string $path = null, array $sapiVars = [], bool $cached = true)
+    public static function getBaseUrl(?string $path = null, array $sapiVars = [], bool $cached = false)
     {
         $sapiVars = array_merge($_SERVER, $sapiVars);
         $scriptName = $sapiVars['SCRIPT_NAME'] ?? '';
@@ -224,7 +224,7 @@ class UriHelper
         return static::getSiteUrl($path, $sapiVars, $cached);
     }
 
-    public static function getCurrentString(array $sapiVars = [], bool $cached = true)
+    public static function getCurrentString(array $sapiVars = [], bool $cached = false)
     {
         static $uri;
         if ($cached && isset($uri)) {
