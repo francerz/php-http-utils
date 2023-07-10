@@ -24,6 +24,11 @@
             "Francerz\\Http\\Utils\\Exceptions\\": "src/exceptions"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Francerz\\HttpUtils\\Dev\\": "dev"
+        }
+    },
     "require-dev": {
         "phpunit/phpunit": "^8.5"
     }
