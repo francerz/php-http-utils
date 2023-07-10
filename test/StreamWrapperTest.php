@@ -22,9 +22,9 @@ class StreamWrapperTest extends TestCase
         );
         $wrapper = new StreamWrapper($stream);
 
-        $this->assertEquals('Reading the contents.', $wrapper->readLine());
-        $this->assertEquals('From the file', $wrapper->readLine());
-        $this->assertEquals('Until end.', $wrapper->readLine());
+        $this->assertEquals("Reading the contents.\n", $wrapper->readLine());
+        $this->assertEquals("From the file\n", $wrapper->readLine());
+        $this->assertEquals("Until end.", $wrapper->readLine());
         $this->assertEquals('', $wrapper->readLine());
 
     }

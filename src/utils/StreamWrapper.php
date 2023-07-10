@@ -104,7 +104,7 @@ class StreamWrapper implements StreamInterface
         while (!$this->stream->eof()) {
             $pos = strpos($this->lastLine, $eol);
             if ($pos !== false) {
-                $line = substr($this->lastLine, 0, $pos);
+                $line = substr($this->lastLine, 0, $pos + $eolLen);
                 $this->lastLine = substr($this->lastLine, $pos + $eolLen);
                 return $line;
             }
@@ -113,7 +113,7 @@ class StreamWrapper implements StreamInterface
 
         $pos = strpos($this->lastLine, $eol);
         if ($pos !== false) {
-            $line = substr($this->lastLine, 0, $pos);
+            $line = substr($this->lastLine, 0, $pos + $eolLen);
             $this->lastLine = substr($this->lastLine, $pos + $eolLen);
             return $line;
         }
