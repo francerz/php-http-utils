@@ -402,8 +402,11 @@ class HttpHelper
         return $file->getSize() > $maxSize;
     }
 
-    public static function throwFileErrorException(UploadedFileInterface $file)
+    public static function throwFileErrorException(?UploadedFileInterface $file)
     {
+        if (is_null($file)) {
+            throw new UploadFileMissedException();
+        }
         switch ($file->getError()) {
             case UPLOAD_ERR_INI_SIZE:
                 throw new UploadFileExceedsIniMaxSizeException();
