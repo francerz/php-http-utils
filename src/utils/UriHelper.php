@@ -205,22 +205,62 @@ class UriHelper
         return '/' . ltrim($pathInfo, '/');
     }
 
+    private static function buildStringFromParts(array $uriParts): string
+    {
+        $join[] = $scheme = $uriParts['scheme'] ?? 'http';
+        $join[] = '://';
+        if (isset($uriParts['user'])) {
+            $join[] = $uriParts['user'];
+            if (isset($uriParts['pass'])) {
+                $join[] = ":{$uriParts['pass']}";
+            }
+            $join[] = '@';
+        }
+        $join[] = $uriParts['host'] ?? 'localhost';
+        if (isset($uriParts['port'])) {
+            $port = $uriParts['port'];
+            if (
+                $scheme == 'http' && $port != 80 ||
+                $scheme == 'https' && $port != 443
+            ) {
+                $join[] = ":{$port}";
+            }
+        }
+        $join[] = '/';
+        if (isset($uriParts['path'])) {
+            $join[] = ltrim($uriParts['path'], '/');
+        }
+        if (isset($uriParts['query'])) {
+            $join[] = "?{$uriParts['query']}";
+        }
+        if (isset($uriParts['fragment'])) {
+            $join[] .= "#{$uriParts['fragment']}";
+        }
+        return join('', $join);
+    }
+
     public static function getSiteUrl(?string $path = null, array $sapiVars = [], bool $cached = false)
     {
         $sapiVars = array_merge($_SERVER, $sapiVars);
         $sapiVars['REQUEST_URI'] = $sapiVars['SCRIPT_NAME'] ?? '';
         $uri = static::getCurrentString($sapiVars, $cached);
-        if (isset($path)) {
-            $uri = rtrim($uri, '/') . '/' . ltrim($path, '/');
+        $uriParts = parse_url($uri);
+        if (isset($sapiVars['X_FORWARDED_PREFIX'])) {
+            $uriParts['path'] =
+                '/' . ltrim($sapiVars['X_FORWARDED_PREFIX'], '/') .
+                $uriParts['path'];
         }
-        return $uri;
+        if (!empty($path)) {
+            $uriParts['path'] = ($uriParts['path'] ?? '') . '/' . ltrim($path, '/');
+        }
+        return static::buildStringFromParts($uriParts);
     }
 
     public static function getBaseUrl(?string $path = null, array $sapiVars = [], bool $cached = false)
     {
         $sapiVars = array_merge($_SERVER, $sapiVars);
         $scriptName = $sapiVars['SCRIPT_NAME'] ?? '';
-        $sapiVars['SCRIPT_NAME'] = substr_replace($scriptName, '', strrpos($scriptName, '/'));
+        $sapiVars['SCRIPT_NAME'] = '/' . ltrim(strtr(dirname($scriptName), '\\', '/'), '/');
         return static::getSiteUrl($path, $sapiVars, $cached);
     }
 
@@ -233,25 +273,18 @@ class UriHelper
 
         $sapiVars = array_merge($_SERVER, $sapiVars);
 
-        $scheme = 'http';
-        $defaultPort = 80;
-        if (!empty($sapiVars['HTTPS']) && $sapiVars['HTTPS'] != 'off') {
-            $scheme = 'https';
-            $defaultPort = 443;
+        $uriParts['scheme'] = 'http';
+        $uriParts['port'] = 80;
+        if (isset($sapiVars['HTTPS']) && $sapiVars['HTTPS'] != 'off') {
+            $uriParts['scheme'] = 'https';
+            $uriParts['port'] = 443;
         }
-
-        $host = $sapiVars['HTTP_HOST'] ?? null;
-        if (!isset($host)) {
-            $host = $sapiVars['SERVER_NAME'];
-            // Detecting port and comparing with default
-            if (isset($sapiVars['SERVER_PORT']) && ($port = $sapiVars['SERVER_PORT']) !== $defaultPort) {
-                $host .= ":{$port}";
-            }
+        if (isset($sapiVars['SERVER_PORT'])) {
+            $uriParts['port'] = $sapiVars['SERVER_PORT'];
         }
-
-        $uri = "{$scheme}://{$host}";
-        $uri = rtrim($uri, '/') . '/' . ltrim($sapiVars['REQUEST_URI'], '/');
-        return $uri;
+        $uriParts['host'] = $sapiVars['HTTP_HOST'] ?? $sapiVars['SERVER_NAME'] ?? null;
+        $uriParts['path'] = '/' . ltrim($sapiVars['REQUEST_URI'], '/');
+        return static::buildStringFromParts($uriParts);
     }
 
     public static function getCurrent(UriFactoryInterface $uriFactory): UriInterface
@@ -315,7 +348,7 @@ class UriHelper
         return $explode[0];
     }
 
-    public static function getPassword(UriInterface $uri): string
+    public static function getPassword(UriInterface $uri): ?string
     {
         $explode = explode(':', $uri->getUserInfo());
         if (isset($explode[1])) {

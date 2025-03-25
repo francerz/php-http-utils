@@ -66,16 +66,16 @@ class UriHelperTest extends TestCase
         $this->assertEquals(
             'https://localhost/assets/css/style.css',
             UriHelper::getBaseUrl('/assets/css/style.css', [
-                'HTTP_HOST' => 'localhost',
                 'HTTPS' => 'on',
+                'HTTP_HOST' => 'localhost',
                 'SCRIPT_NAME' => '/index.php'
             ], false)
         );
         $this->assertEquals(
             'https://localhost/public/assets/css/style.css',
             UriHelper::getBaseUrl('/assets/css/style.css', [
-                'HTTP_HOST' => 'localhost',
                 'HTTPS' => 'on',
+                'HTTP_HOST' => 'localhost',
                 'SCRIPT_NAME' => '/public/index.php'
             ], false)
         );
@@ -110,12 +110,23 @@ class UriHelperTest extends TestCase
                 'SCRIPT_NAME' => '/public/index.php'
             ], false)
         );
+
+        $this->assertEquals(
+            'https://localhost:3000/public/index.php/some/path',
+            siteUrl('/some/path', [
+                'HTTPS' => 'on',
+                'SERVER_NAME' => 'localhost',
+                'SERVER_PORT' => 3000,
+                'SCRIPT_NAME' => 'index.php',
+                'X_FORWARDED_PREFIX' => '/public'
+            ], false)
+        );
     }
 
     public function testGetPathParams()
     {
         $matches = UriHelper::getPathParams('/a/1/b/2', '/a/{a}/b/{b}');
-        var_dump($matches);
+        // var_dump($matches);
         $this->assertTrue(true);
     }
 }
