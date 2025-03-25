@@ -245,9 +245,9 @@ class UriHelper
         $sapiVars['REQUEST_URI'] = $sapiVars['SCRIPT_NAME'] ?? '';
         $uri = static::getCurrentString($sapiVars, $cached);
         $uriParts = parse_url($uri);
-        if (isset($sapiVars['X_FORWARDED_PREFIX'])) {
+        if (isset($sapiVars['HTTP_X_FORWARDED_PREFIX'])) {
             $uriParts['path'] =
-                '/' . ltrim($sapiVars['X_FORWARDED_PREFIX'], '/') .
+                '/' . ltrim($sapiVars['HTTP_X_FORWARDED_PREFIX'], '/') .
                 $uriParts['path'];
         }
         if (!empty($path)) {

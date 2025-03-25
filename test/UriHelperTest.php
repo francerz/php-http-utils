@@ -118,7 +118,7 @@ class UriHelperTest extends TestCase
                 'SERVER_NAME' => 'localhost',
                 'SERVER_PORT' => 3000,
                 'SCRIPT_NAME' => 'index.php',
-                'X_FORWARDED_PREFIX' => '/public'
+                'HTTP_X_FORWARDED_PREFIX' => '/public'
             ], false)
         );
     }
