@@ -1,7 +1,10 @@
 <?php
 
+namespace Francerz\Http\Utils\Tests;
+
 use Francerz\Http\Utils\UriHelper;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 
 use function Francerz\Http\Utils\baseUrl;
 use function Francerz\Http\Utils\siteUrl;
@@ -112,12 +115,13 @@ class UriHelperTest extends TestCase
         );
 
         $this->assertEquals(
-            'https://localhost:3000/public/index.php/some/path',
+            'https://www.domain.com:3000/public/index.php/some/path',
             siteUrl('/some/path', [
                 'HTTPS' => 'on',
                 'SERVER_NAME' => 'localhost',
                 'SERVER_PORT' => 3000,
                 'SCRIPT_NAME' => 'index.php',
+                'HTTP_X_FORWARDED_HOST' => 'www.domain.com',
                 'HTTP_X_FORWARDED_PREFIX' => '/public'
             ], false)
         );

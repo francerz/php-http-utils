@@ -205,7 +205,7 @@ class UriHelper
         return '/' . ltrim($pathInfo, '/');
     }
 
-    private static function buildStringFromParts(array $uriParts): string
+    public static function buildStringFromParts(array $uriParts): string
     {
         $join[] = $scheme = $uriParts['scheme'] ?? 'http';
         $join[] = '://';
@@ -245,6 +245,12 @@ class UriHelper
         $sapiVars['REQUEST_URI'] = $sapiVars['SCRIPT_NAME'] ?? '';
         $uri = static::getCurrentString($sapiVars, $cached);
         $uriParts = parse_url($uri);
+        if (isset($sapiVars['HTTP_X_FORWARDED_HOST'])) {
+            $uriParts['host'] = $sapiVars['HTTP_X_FORWARDED_HOST'];
+        }
+        if (isset($sapiVars['HTTP_X_FORWARDED_PORT'])) {
+            $uriParts['port'] = $sapiVars['HTTP_X_FORWARDED_PORT'];
+        }
         if (isset($sapiVars['HTTP_X_FORWARDED_PREFIX'])) {
             $uriParts['path'] =
                 '/' . ltrim($sapiVars['HTTP_X_FORWARDED_PREFIX'], '/') .
