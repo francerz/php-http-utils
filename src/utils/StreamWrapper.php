@@ -14,14 +14,14 @@ class StreamWrapper implements StreamInterface
         $this->stream = $stream;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->stream->__toString();
     }
 
-    public function close()
+    public function close(): void
     {
-        return $this->stream->close();
+        $this->stream->close();
     }
 
     public function detach()
@@ -29,57 +29,57 @@ class StreamWrapper implements StreamInterface
         return $this->stream->detach();
     }
 
-    public function getSize()
+    public function getSize(): ?int
     {
         return $this->stream->getSize();
     }
 
-    public function tell()
+    public function tell(): int
     {
         return $this->stream->tell();
     }
 
-    public function eof()
+    public function eof(): bool
     {
         return $this->stream->eof();
     }
 
-    public function isSeekable()
+    public function isSeekable(): bool
     {
         return $this->stream->isSeekable();
     }
 
-    public function seek($offset, $whence = SEEK_SET)
+    public function seek($offset, $whence = SEEK_SET): void
     {
-        return $this->stream->seek($offset, $whence);
+        $this->stream->seek($offset, $whence);
     }
 
-    public function rewind()
+    public function rewind(): void
     {
-        return $this->stream->rewind();
+        $this->stream->rewind();
     }
 
-    public function isWritable()
+    public function isWritable(): bool
     {
         return $this->stream->isWritable();
     }
 
-    public function write($string)
+    public function write($string): int
     {
         return $this->stream->write($string);
     }
 
-    public function isReadable()
+    public function isReadable(): bool
     {
         return $this->stream->isReadable();
     }
 
-    public function read($length)
+    public function read($length): string
     {
         return $this->stream->read($length);
     }
 
-    public function getContents()
+    public function getContents(): string
     {
         return $this->stream->getContents();
     }

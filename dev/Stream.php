@@ -14,12 +14,12 @@ class Stream implements StreamInterface
         $this->content = $content;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->content;
     }
 
-    public function close()
+    public function close(): void
     {
     }
 
@@ -28,27 +28,27 @@ class Stream implements StreamInterface
         return null;
     }
 
-    public function getSize()
+    public function getSize(): ?int
     {
         return strlen($this->content);
     }
 
-    public function tell()
+    public function tell(): int
     {
         return $this->pointer;
     }
 
-    public function eof()
+    public function eof(): bool
     {
         return $this->tell() >= $this->getSize();
     }
 
-    public function isSeekable()
+    public function isSeekable(): bool
     {
         return true;
     }
 
-    public function seek($offset, $whence = SEEK_SET)
+    public function seek($offset, $whence = SEEK_SET): void
     {
         switch ($whence) {
             case SEEK_SET:
@@ -63,26 +63,27 @@ class Stream implements StreamInterface
         }
     }
 
-    public function rewind()
+    public function rewind(): void
     {
         $this->seek(0);
     }
 
-    public function isWritable()
+    public function isWritable(): bool
     {
         return false;
     }
 
-    public function write($string)
+    public function write($string): int
     {
+        return 0;
     }
 
-    public function isReadable()
+    public function isReadable(): bool
     {
         return true;
     }
 
-    public function read($length)
+    public function read($length): string
     {
         $bytes = substr($this->content, $this->pointer, $length);
         $this->pointer += $length;
@@ -90,7 +91,7 @@ class Stream implements StreamInterface
         return $bytes;
     }
 
-    public function getContents()
+    public function getContents(): string
     {
         return $this->content;
     }
