@@ -10,12 +10,12 @@ class RequestHelperTest extends TestCase
 {
     public function testStringify()
     {
-        $request = new Request('http://www.example.com/test/path?query=string#fragment');
-        $request = $request->withHeader('Host', 'www.example.com');
+        $request = new Request('http://www.example.com:8080/test/path?query=string#fragment');
+        $request = $request->withHeader('Host', 'www.example.com:8080');
 
         $this->assertEquals(
             "GET /test/path?query=string HTTP/1.1\n" .
-            "Host: www.example.com\n" .
+            "Host: www.example.com:8080\n" .
             "\n",
             RequestHelper::stringify($request)
         );
