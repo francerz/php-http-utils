@@ -212,7 +212,7 @@ class UriHelper
 
     public static function buildStringFromParts(array $uriParts): string
     {
-        $join[] = $scheme = $uriParts['scheme'] ?? 'http';
+        $join[] = $scheme = $uriParts['scheme'] ?? '';
         $join[] = '://';
         if (!empty($uriParts['user'])) {
             $join[] = $uriParts['user'];
@@ -221,7 +221,7 @@ class UriHelper
             }
             $join[] = '@';
         }
-        $join[] = $uriParts['host'] ?? 'localhost';
+        $join[] = $uriParts['host'] ?? '';
         if (isset($uriParts['port'])) {
             $port = $uriParts['port'];
             if (
