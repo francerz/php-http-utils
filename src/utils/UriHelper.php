@@ -235,9 +235,8 @@ class UriHelper
                 $join[] = ":{$port}";
             }
         }
-        $join[] = '/';
         if (!empty($uriParts['path'])) {
-            $join[] = ltrim($uriParts['path'], '/');
+            $join[] = preg_replace('/^\/+/', '/', $uriParts['path']);
         }
         if (!empty($uriParts['query'])) {
             $join[] = "?{$uriParts['query']}";
