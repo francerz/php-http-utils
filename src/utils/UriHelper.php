@@ -236,7 +236,10 @@ class UriHelper
             }
         }
         if (!empty($uriParts['path'])) {
-            $join[] = preg_replace('/^\/+/', '/', $uriParts['path']);
+            if (count($join)) {
+                $join[] = '/';
+            }
+            $join[] = ltrim($uriParts['path'], '/');
         }
         if (!empty($uriParts['query'])) {
             $join[] = "?{$uriParts['query']}";
