@@ -210,14 +210,9 @@ class UriHelper
         return '/' . ltrim($pathInfo, '/');
     }
 
-    public static function buildStringFromParts(array $uriParts): string
+    private static function buildAuthorityStringFromParts(array $uriParts): string
     {
-        $scheme = '';
-        $join = [];
-        if (!empty($uriParts['scheme'])) {
-            $join[] = $scheme = $uriParts['scheme'];
-            $join[] = '://';
-        }
+        $scheme = $uriParts['scheme'];
         if (!empty($uriParts['user'])) {
             $join[] = $uriParts['user'];
             if (!empty($uriParts['pass'])) {
@@ -234,6 +229,24 @@ class UriHelper
             ) {
                 $join[] = ":{$port}";
             }
+        }
+        return join('', $join);
+    }
+
+    public static function buildStringFromParts(array $uriParts): string
+    {
+        $scheme = '';
+        $join = [];
+        if (!empty($uriParts['scheme'])) {
+            $join[] = $scheme = $uriParts['scheme'];
+            $join[] = ':';
+        }
+        $authority = static::buildAuthorityStringFromParts($uriParts);
+        if (!empty($authority)) {
+            if (!empty($scheme)) {
+                $join[] = '//';
+            }
+            $join[] = $authority;
         }
         if (!empty($uriParts['path'])) {
             if (count($join)) {
