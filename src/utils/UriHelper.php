@@ -8,6 +8,11 @@ use Psr\Http\Message\UriInterface;
 
 class UriHelper
 {
+    private static $defaultSchemePorts = [
+        'http' => [80],
+        'https' => [443],
+    ];
+
     # region Private methods
     private static function mixUrlEncodedParams(
         string $encoded_string,
@@ -209,9 +214,9 @@ class UriHelper
     {
         $join[] = $scheme = $uriParts['scheme'] ?? 'http';
         $join[] = '://';
-        if (isset($uriParts['user'])) {
+        if (!empty($uriParts['user'])) {
             $join[] = $uriParts['user'];
-            if (isset($uriParts['pass'])) {
+            if (!empty($uriParts['pass'])) {
                 $join[] = ":{$uriParts['pass']}";
             }
             $join[] = '@';
@@ -220,20 +225,20 @@ class UriHelper
         if (isset($uriParts['port'])) {
             $port = $uriParts['port'];
             if (
-                $scheme == 'http' && $port != 80 ||
-                $scheme == 'https' && $port != 443
+                isset(static::$defaultSchemePorts[$scheme]) &&
+                !in_array($port, static::$defaultSchemePorts[$scheme])
             ) {
                 $join[] = ":{$port}";
             }
         }
         $join[] = '/';
-        if (isset($uriParts['path'])) {
+        if (!empty($uriParts['path'])) {
             $join[] = ltrim($uriParts['path'], '/');
         }
-        if (isset($uriParts['query'])) {
+        if (!empty($uriParts['query'])) {
             $join[] = "?{$uriParts['query']}";
         }
-        if (isset($uriParts['fragment'])) {
+        if (!empty($uriParts['fragment'])) {
             $join[] .= "#{$uriParts['fragment']}";
         }
         return join('', $join);
@@ -290,14 +295,13 @@ class UriHelper
         }
         $uriParts['host'] = $sapiVars['HTTP_HOST'] ?? $sapiVars['SERVER_NAME'] ?? null;
         $uriParts['path'] = '/' . ltrim($sapiVars['REQUEST_URI'], '/');
+        $uriParts['query'] = $_SERVER['QUERY_STRING'] ?? null;
         return static::buildStringFromParts($uriParts);
     }
 
     public static function getCurrent(UriFactoryInterface $uriFactory): UriInterface
     {
-        return $uriFactory
-            ->createUri(static::getCurrentString())
-            ->withQuery($_SERVER['QUERY_STRING'] ?? '');
+        return $uriFactory->createUri(static::getCurrentString());
     }
 
     private static function mapReplaceString(string $uri, array $replaces, bool $encode_values = true): string
