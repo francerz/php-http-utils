@@ -212,7 +212,7 @@ class UriHelper
 
     private static function buildAuthorityStringFromParts(array $uriParts): string
     {
-        $scheme = $uriParts['scheme'];
+        $scheme = $uriParts['scheme'] ?? null;
         if (!empty($uriParts['user'])) {
             $join[] = $uriParts['user'];
             if (!empty($uriParts['pass'])) {
@@ -269,17 +269,6 @@ class UriHelper
         $sapiVars['REQUEST_URI'] = $sapiVars['SCRIPT_NAME'] ?? '';
         $uri = static::getCurrentString($sapiVars, $cached);
         $uriParts = parse_url($uri);
-        if (isset($sapiVars['HTTP_X_FORWARDED_HOST'])) {
-            $uriParts['host'] = $sapiVars['HTTP_X_FORWARDED_HOST'];
-        }
-        if (isset($sapiVars['HTTP_X_FORWARDED_PORT'])) {
-            $uriParts['port'] = $sapiVars['HTTP_X_FORWARDED_PORT'];
-        }
-        if (isset($sapiVars['HTTP_X_FORWARDED_PREFIX'])) {
-            $uriParts['path'] =
-                '/' . ltrim($sapiVars['HTTP_X_FORWARDED_PREFIX'], '/') .
-                $uriParts['path'];
-        }
         if (!empty($path)) {
             $uriParts['path'] = ($uriParts['path'] ?? '') . '/' . ltrim($path, '/');
         }
@@ -303,17 +292,26 @@ class UriHelper
 
         $sapiVars = array_merge($_SERVER, $sapiVars);
 
-        $uriParts['scheme'] = 'http';
-        $uriParts['port'] = 80;
-        if (isset($sapiVars['HTTPS']) && $sapiVars['HTTPS'] != 'off') {
-            $uriParts['scheme'] = 'https';
-            $uriParts['port'] = 443;
+        $uriParts['scheme'] =
+            $sapiVars['REQUEST_SCHEME'] ??
+            (!empty($sapiVars['HTTPS']) ? 'https' : 'http');
+        $uriParts['port'] =
+            $sapiVars['HTTP_X_FORWARDED_PORT'] ??
+            $sapiVars['SERVER_PORT'] ??
+            ($uriParts['scheme'] == 'https' ? 443 : 80);
+        $uriParts['host'] =
+            $sapiVars['HTTP_X_FORWARDED_HOST'] ??
+            $sapiVars['HTTP_HOST'] ??
+            $sapiVars['SERVER_NAME'] ??
+            null;
+        if (isset($uriParts['host']) && false !== ($colonPos = strpos($uriParts['host'], ':'))) {
+            $uriParts['host'] = substr_replace($uriParts['host'], '', $colonPos);
         }
-        if (isset($sapiVars['SERVER_PORT'])) {
-            $uriParts['port'] = $sapiVars['SERVER_PORT'];
+
+        $uriParts['path'] = $sapiVars['REQUEST_URI'] ?? null;
+        if (!empty($sapiVars['HTTP_X_FORWARDED_PREFIX'])) {
+            $uriParts['path'] = $sapiVars['HTTP_X_FORWARDED_PREFIX'] . '/' . $uriParts['path'];
         }
-        $uriParts['host'] = $sapiVars['HTTP_HOST'] ?? $sapiVars['SERVER_NAME'] ?? null;
-        $uriParts['path'] = '/' . ltrim($sapiVars['REQUEST_URI'], '/');
         $uriParts['query'] = $_SERVER['QUERY_STRING'] ?? null;
         return static::buildStringFromParts($uriParts);
     }

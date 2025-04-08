@@ -119,10 +119,29 @@ class UriHelperTest extends TestCase
             siteUrl('/some/path', [
                 'HTTPS' => 'on',
                 'SERVER_NAME' => 'localhost',
-                'SERVER_PORT' => 3000,
+                'SERVER_PORT' => 443,
                 'SCRIPT_NAME' => 'index.php',
                 'HTTP_X_FORWARDED_HOST' => 'www.domain.com',
+                'HTTP_X_FORWARDED_PORT' => 3000,
                 'HTTP_X_FORWARDED_PREFIX' => '/public'
+            ], false)
+        );
+    }
+
+    public function testGetCurrentString()
+    {
+        $this->assertEquals(
+            'http://www.domain.com:3000/public/index.php/some/path',
+            UriHelper::getCurrentString([
+                'REQUEST_METHOD' => 'GET',
+                'REQUEST_SCHEME' => 'http',
+                'REQUEST_URI' => '/public/index.php/some/path',
+                'SERVER_PROTOCOL' => 'HTTP/1.1',
+                'SERVER_ADDR' => '172.19.0.1',
+                'SERVER_NAME' => 'localhost',
+                'SERVER_PORT' => 3000,
+                'SCRIPT_NAME' => '/index.php',
+                'HTTP_HOST' => 'www.domain.com:3000'
             ], false)
         );
     }
