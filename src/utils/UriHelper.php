@@ -269,9 +269,12 @@ class UriHelper
         $sapiVars['REQUEST_URI'] = $sapiVars['SCRIPT_NAME'] ?? '';
         $uri = static::getCurrentString($sapiVars, $cached);
         $uriParts = parse_url($uri);
-        if (!empty($path)) {
-            $uriParts['path'] = ($uriParts['path'] ?? '') . '/' . ltrim($path, '/');
+        $pathParts = parse_url($path);
+        if (!empty($pathParts['path'])) {
+            $uriParts['path'] = ($uriParts['path'] ?? '') . '/' . ltrim($pathParts['path'], '/');
         }
+        $uriParts['query'] = $pathParts['query'] ?? null;
+        $uriParts['fragment'] = $pathParts['fragment'] ?? null;
         return static::buildStringFromParts($uriParts);
     }
 
@@ -295,24 +298,26 @@ class UriHelper
         $uriParts['scheme'] =
             $sapiVars['REQUEST_SCHEME'] ??
             (!empty($sapiVars['HTTPS']) ? 'https' : 'http');
-        $uriParts['port'] =
-            $sapiVars['HTTP_X_FORWARDED_PORT'] ??
-            $sapiVars['SERVER_PORT'] ??
-            ($uriParts['scheme'] == 'https' ? 443 : 80);
         $uriParts['host'] =
             $sapiVars['HTTP_X_FORWARDED_HOST'] ??
             $sapiVars['HTTP_HOST'] ??
             $sapiVars['SERVER_NAME'] ??
             null;
         if (isset($uriParts['host']) && false !== ($colonPos = strpos($uriParts['host'], ':'))) {
-            $uriParts['host'] = substr_replace($uriParts['host'], '', $colonPos);
+            $uriParts['port'] = intval(substr($uriParts['host'], $colonPos + 1));
+            $uriParts['host'] = substr($uriParts['host'], 0, $colonPos);
         }
+        $uriParts['port'] =
+            $uriParts['port'] ??
+            $sapiVars['HTTP_X_FORWARDED_PORT'] ??
+            $sapiVars['SERVER_PORT'] ??
+            ($uriParts['scheme'] == 'https' ? 443 : 80);
 
         $uriParts['path'] = $sapiVars['REQUEST_URI'] ?? null;
         if (!empty($sapiVars['HTTP_X_FORWARDED_PREFIX'])) {
             $uriParts['path'] = $sapiVars['HTTP_X_FORWARDED_PREFIX'] . '/' . $uriParts['path'];
         }
-        $uriParts['query'] = $_SERVER['QUERY_STRING'] ?? null;
+        $uriParts['query'] = $sapiVars['QUERY_STRING'] ?? null;
         return static::buildStringFromParts($uriParts);
     }
 

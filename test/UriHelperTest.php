@@ -121,9 +121,21 @@ class UriHelperTest extends TestCase
                 'SERVER_NAME' => 'localhost',
                 'SERVER_PORT' => 443,
                 'SCRIPT_NAME' => 'index.php',
+                'QUERY_STRING' => 'v1=abc&v2=xyz',
                 'HTTP_X_FORWARDED_HOST' => 'www.domain.com',
                 'HTTP_X_FORWARDED_PORT' => 3000,
                 'HTTP_X_FORWARDED_PREFIX' => '/public'
+            ], false)
+        );
+
+        $this->assertEquals(
+            'https://www.domain.com:3000/index.php/some/path?q1=abc&q2=xyz#item-id',
+            siteUrl('/some/path?q1=abc&q2=xyz#item-id', [
+                'HTTPS' => 'on',
+                'HTTP_HOST' => 'www.domain.com:3000',
+                'SERVER_PORT' => 443,
+                'SCRIPT_NAME' => 'index.php',
+                'QUERY_STRING' => 'v1=abc&v2=xyz',
             ], false)
         );
     }
@@ -131,11 +143,12 @@ class UriHelperTest extends TestCase
     public function testGetCurrentString()
     {
         $this->assertEquals(
-            'http://www.domain.com:3000/public/index.php/some/path',
+            'http://www.domain.com:3000/public/index.php/some/path?v1=abc&v2=xyz',
             UriHelper::getCurrentString([
                 'REQUEST_METHOD' => 'GET',
                 'REQUEST_SCHEME' => 'http',
                 'REQUEST_URI' => '/public/index.php/some/path',
+                'QUERY_STRING' => 'v1=abc&v2=xyz',
                 'SERVER_PROTOCOL' => 'HTTP/1.1',
                 'SERVER_ADDR' => '172.19.0.1',
                 'SERVER_NAME' => 'localhost',
